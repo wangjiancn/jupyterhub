@@ -1248,11 +1248,20 @@ import os
 cwd = os.getcwd()
 user_path = os.path.abspath(cwd). \
     replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
+
+# local build
 # c.DockerSpawner.image = 'singleuser:latest'
+
+# cpu machine
 c.DockerSpawner.image = 'magicalion/singleuser:latest'
+
+# gpu machine
+# c.DockerSpawner.image = 'magicalion/singleuser:latest-gpu'
 # c.DockerSpawner.extra_host_config = {
 #     'runtime': 'nvidia',
 # }
+
+
 c.DockerSpawner.remove_containers = True
 c.DockerSpawner.container_ip = '0.0.0.0'
 c.DockerSpawner.host_ip = '0.0.0.0'
