@@ -3,9 +3,9 @@ WORK=/home/jovyan/work
 #ls -la
 #export WORKON_HOME=$WORK/.virtualenvs
 
-export VIRTUALENVWRAPPER_PYTHON=/opt/conda/bin/python
-export VIRTUALENVWRAPPER_VIRTUALENV=/opt/conda/bin/virtualenv
-source /opt/conda/bin/virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
+export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
+source /usr/local/bin/virtualenvwrapper.sh
 
 #lsvirtualenv
 #mktmpenv

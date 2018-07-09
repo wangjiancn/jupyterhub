@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-export VIRTUALENVWRAPPER_PYTHON=/opt/conda/bin/python3.6
-export VIRTUALENVWRAPPER_VIRTUALENV=/opt/conda/bin/virtualenv
-source /opt/conda/bin/virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
+export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
+source /usr/local/bin/virtualenvwrapper.sh
 
 workon jlenv
 echo "freezing env"
-pip freeze > /home/jovyan/work/faas_requirements.txt
+pip freeze > /home/jovyan/work/requirements.txt
 echo "freeze env done"
 

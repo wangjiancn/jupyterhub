@@ -3,9 +3,9 @@ M_DIR=/home/jovyan/modules/${1}
 W_DIR=/home/jovyan
 PACKAGE_DIR=${M_DIR}/mynewenv/lib/python3.6/site-packages
 
-export VIRTUALENVWRAPPER_PYTHON=/opt/conda/bin/python
-export VIRTUALENVWRAPPER_VIRTUALENV=/opt/conda/bin/virtualenv
-source /opt/conda/bin/virtualenvwrapper.sh
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
+export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
+source /usr/local/bin/virtualenvwrapper.sh
 
 if [ ! -d ${M_DIR}  ] || [ ! -d ${PACKAGE_DIR} ] ; then
     echo "No such directory: $M_DIR"
