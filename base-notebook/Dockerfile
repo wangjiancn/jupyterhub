@@ -69,8 +69,11 @@ SHELL ["/bin/bash", "-c"]
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv jlenv && \
     workon jlenv && \
-    pip install -U opencv-python jupyter && \
+    pip install -U opencv-python notebook jupyterhub && \
     pip install jupyterlab==0.31.1 && \
     toggleglobalsitepackages
+
+EXPOSE 8888
+WORKDIR /home/$NB_USER/work
 
 CMD ['bash', '/home/jovyan/run.sh']
