@@ -1,21 +1,13 @@
-FROM tensorflow/tensorflow:latest-gpu-py3
+FROM tensorflow/tensorflow:latest-py3
 
 LABEL maintainer="Mo Model Team"
 
 USER root
 
-RUN rm -f /etc/apt/sources.list.d/cuda.list
-RUN rm -f /etc/apt/sources.list.d/nvidia-ml.list
-
-RUN apt-get update && apt-get install -yq apt-utils apt-transport-https
-
-ADD cuda.list /etc/apt/sources.list.d/cuda.list
-ADD nvidia-ml.list /etc/apt/sources.list.d/nvidia-ml.list
-
 RUN apt-get update
-RUN apt-get install -yq graphviz tzdata
 
 # To change the datetime from UTC to Asia/Shanghai
+RUN apt-get install -yq graphviz tzdata
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
