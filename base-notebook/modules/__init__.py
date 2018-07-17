@@ -124,19 +124,25 @@ class Client:
 
     def run_module_general(self, action, module_id, *args, with_control=False,
                            **kwargs):
-
-        # check auth and create invoke
-        invoke = requests.post(
-            '{SERVER}/user/auth_and_create_invoke'.format(SERVER=SERVER),
-            json={'module_identity': module_id,
-                  'project_id': self.project_id,
-                  'project_type': self.project_type,
-                  'api_key': self.api_key,
-                  'source_file_path': self.source_file_path,
-                  'user_ID': self.user_ID,
-                  'run_args': {'args': args, 'kwargs': kwargs}
-                  },
-        ).json()['response']
+        body = {'module_identity': module_id,
+                'project_id': self.project_id,
+                'project_type': self.project_type,
+                'api_key': self.api_key,
+                'source_file_path': self.source_file_path,
+                'user_ID': self.user_ID
+                }
+        try:
+            json.dumps({'args': args, 'kwargs': kwargs})
+        except:
+            pass
+        else:
+            body.update({'run_args': {'args': args, 'kwargs': kwargs}})
+        finally:
+            # check auth and create invoke
+            invoke = requests.post(
+                '{SERVER}/user/auth_and_create_invoke'.format(SERVER=SERVER),
+                json=body,
+            ).json()['response']
 
         if invoke == 'INVALID_KEY':
             raise Exception('api key is not valid')
