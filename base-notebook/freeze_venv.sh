@@ -6,6 +6,6 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 workon jlenv
 echo "freezing env"
-pip freeze > /home/jovyan/work/requirements.txt
+pip freeze > /home/jovyan/work/faas_requirements.txt
 echo "freeze env done"
 
