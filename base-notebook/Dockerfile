@@ -39,6 +39,9 @@ RUN chown jovyan:users /home/jovyan/run.sh
 ADD add_venv.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/add_venv.sh
 
+ADD install_venv.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/install_venv.sh
+
 ADD remove_venv.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/remove_venv.sh
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 M_DIR=/home/jovyan/modules/${1}
 W_DIR=/home/jovyan
-PACKAGE_DIR=${M_DIR}/mynewenv/lib/python3.6/site-packages
+PACKAGE_DIR=${M_DIR}/mynewenv/lib/python3.5/site-packages
 
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
 export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
