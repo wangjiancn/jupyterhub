@@ -79,7 +79,7 @@ SHELL ["/bin/bash", "-c"]
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv jlenv && \
     workon jlenv && \
-    pip install -U opencv-python notebook keras && \
+    pip install -U opencv-python notebook seaborn keras && \
     pip install jupyterhub==0.8.1 jupyterlab==0.31.1 && \
     toggleglobalsitepackages
 
