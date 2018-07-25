@@ -7,7 +7,7 @@ USER root
 RUN apt-get update
 
 # To change the datetime from UTC to Asia/Shanghai
-RUN apt-get install -yq graphviz tzdata
+RUN apt-get install -yq graphviz tzdata nano vim wget
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -39,8 +39,8 @@ RUN chown jovyan:users /home/jovyan/run.sh
 ADD add_venv.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/add_venv.sh
 
-ADD install_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/install_venv.sh
+#ADD install_venv.sh /home/jovyan
+#RUN chown jovyan:users /home/jovyan/install_venv.sh
 
 ADD remove_venv.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/remove_venv.sh
@@ -57,7 +57,7 @@ RUN chown -R jovyan:users /home/jovyan/dataset
 ADD pip.conf /home/jovyan/.pip/pip.conf
 RUN chown -R jovyan:users /home/jovyan/.pip
 
-RUN pip install virtualenvwrapper
+RUN pip install virtualenvwrapper virtualenv-clone
 
 USER $NB_UID
 
@@ -72,8 +72,8 @@ SHELL ["/bin/bash", "-c"]
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv jlenv && \
     workon jlenv && \
-    pip install -U opencv-python notebook jupyterhub && \
-    pip install jupyterlab==0.31.1 && \
+    pip install -U opencv-python notebook && \
+    pip install jupyterhub==0.8.1 jupyterlab==0.31.1 && \
     toggleglobalsitepackages
 
 EXPOSE 8888

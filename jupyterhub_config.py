@@ -1262,6 +1262,8 @@ c.DockerSpawner.image = 'magicalion/singleuser:latest'
 # }
 
 
+c.DockerSpawner.start_timeout = 120
+c.DockerSpawner.http_timeout = 120
 c.DockerSpawner.remove_containers = True
 c.DockerSpawner.container_ip = '0.0.0.0'
 c.DockerSpawner.host_ip = '0.0.0.0'
