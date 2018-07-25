@@ -7,7 +7,7 @@ USER root
 RUN apt-get update
 
 # To change the datetime from UTC to Asia/Shanghai
-RUN apt-get install -yq graphviz tzdata nano vim wget
+RUN apt-get install -yq graphviz tzdata nano vim wget git
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
