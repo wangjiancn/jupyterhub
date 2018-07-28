@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-WORK=/home/jovyan/work
+export WORK=/home/jovyan/work
 
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
 export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
@@ -7,6 +7,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 export WORKON_HOME=${WORK}
 if [ ! -e ${WORK}/localenv  ] ; then
+    ls -l ${WORK}
     virtualenv-clone /home/jovyan/.virtualenvs/jlenv ${WORK}/localenv
 fi
 #mkvirtualenv localenv
