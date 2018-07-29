@@ -48,7 +48,9 @@ class MyDockerSpawner(DockerSpawner):
     @property
     def extra_host_config(self):
         return {"port_bindings": {self.port: (self.host_ip,),
-                                  '6006': (self.host_ip,)}}
+                                  '6006': (self.host_ip,)},
+                #'runtime': 'nvidia'
+                }
 
     @default('format_volume_name')
     def _get_default_format_volume_name(self):
