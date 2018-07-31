@@ -7,7 +7,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 export WORKON_HOME=${WORK}
 
-workon localenv
+workon .localenv
 echo "freezing env"
 pip freeze > /home/jovyan/work/faas_requirements.txt
 echo "freeze env done"
