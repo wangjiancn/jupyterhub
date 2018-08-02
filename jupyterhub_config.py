@@ -1254,8 +1254,11 @@ user_path = os.path.abspath(cwd). \
 # local build
 # c.DockerSpawner.image = 'singleuser:latest'
 
+# dev
+c.DockerSpawner.image = 'magicalion/singleuser:dev'
+
 # cpu machine
-c.DockerSpawner.image = 'magicalion/singleuser:latest'
+# c.DockerSpawner.image = 'magicalion/singleuser:latest'
 
 # gpu machine
 # c.DockerSpawner.image = 'magicalion/singleuser:latest-gpu'
