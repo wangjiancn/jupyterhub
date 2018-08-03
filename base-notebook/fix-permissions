@@ -33,3 +33,4 @@ for d in $@; do
     \) \
     -exec chmod +6000 {} \;
 done
+

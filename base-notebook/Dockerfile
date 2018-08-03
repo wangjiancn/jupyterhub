@@ -72,9 +72,15 @@ SHELL ["/bin/bash", "-c"]
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv jlenv && \
     workon jlenv && \
-    pip install -U opencv-python notebook seaborn keras && \
-    pip install jupyterhub==0.8.1 jupyterlab==0.31.1 && \
+    pip --default-timeout=100 install jupyterlab==0.31.1 && \
+    toggleglobalsitepackages && \
+    #make basenv
+    mkvirtualenv basenv && \
+    workon basenv && \
+    pip --default-timeout=100 install -U opencv-python notebook seaborn keras && \
+    pip --default-timeout=100 install jupyterhub==0.8.1 && \
     toggleglobalsitepackages
+    
 
 EXPOSE 8888
 WORKDIR /home/$NB_USER/work
