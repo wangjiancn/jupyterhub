@@ -6,8 +6,13 @@ export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
 source /usr/local/bin/virtualenvwrapper.sh
 
 export WORKON_HOME=${WORK}
+
+if [ -e ${WORK}/localenv  ] ; then
+    # for old workspace, remove old localenv directory
+    rm -rf ${WORK}/localenv
+fi
+
 if [ ! -e ${WORK}/.localenv  ] ; then
-    ls -l ${WORK}
     virtualenv-clone /home/jovyan/.virtualenvs/jlenv ${WORK}/.localenv
 fi
 #mkvirtualenv .localenv
