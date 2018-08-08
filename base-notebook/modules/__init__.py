@@ -97,9 +97,9 @@ class Client:
         self.source_file_path = source_file_path
 
     def controller(self, func, *args, **kw):
-        if func.__name__ == 'module_general':
+        if func.__name__ in ['run', 'predict', 'train']:
             other = {
-                'running_module': args[0]
+                'running_module': kw.pop('module_id')
             }
         else:
             other = {
@@ -129,7 +129,6 @@ class Client:
                 # log end
                 requests.put('{SERVER}/jobs/{job_id}/success'.format(
                     SERVER=SERVER, job_id=job_id)).json()
-                # print('finish run', job)
                 return ret
 
     def record_invoke(self, module_id, *args, **kwargs):
@@ -157,6 +156,7 @@ class Client:
             raise Exception('api key is not valid')
 
     def invoke_wrapper(self, func, *args, with_control=False, **kwargs):
+
         if self.silent and with_control:
             with HiddenPrints():
                 return self.controller(func, *args, **kwargs)
@@ -186,7 +186,9 @@ class Client:
                 if hasattr(super(), fn_name):
                     self.record_invoke(module_id, *args, **kwargs)
                     return self.invoke_wrapper(getattr(super(), fn_name),
-                                               *args, **kwargs)
+                                               *args,
+                                               module_id=module_id,
+                                               **kwargs)
                 else:
                     raise AttributeError(
                         "AttributeError: '{name}' object has no "
@@ -195,8 +197,10 @@ class Client:
 
             def run(w_self, *args, **kwargs):
                 """
-                example: cls.run(with_control=True, a=1, b=2)
-                     OR: cls.run(a=1, b=2)
+                example:
+                cls = client.module('user1/project1/0.0.1')
+                cls.run({'a': 1, 'b': 2}, with_control=True)
+                cls.run({'a': 1, 'b': 2})
                 :param args:
                 :param kwargs:
                 :return:
