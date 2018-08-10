@@ -64,6 +64,16 @@ class Logger(object):
         pass
 
 
+def get_module_info(module_identity):
+    [encoded_name, version] = module_identity.split('/')
+    version = '_'.join(version.split('.'))
+    project = requests.get(
+        '{SERVER}/project/projects/{encoded_name}?by=encoded_name'.format(
+            SERVER=SERVER,
+            encoded_name=encoded_name)).json()['response']
+    return project['user_ID'], project['name'], version
+
+
 def module_general(module_id, action, *args, **kwargs):
     [user_ID, module_name, version] = module_id.split('/')
     version = '_'.join(version.split('.'))
@@ -75,8 +85,9 @@ def module_general(module_id, action, *args, **kwargs):
 
 
 def get_module(module_id):
-    [user_ID, module_name, version] = module_id.split('/')
-    version = '_'.join(version.split('.'))
+    # [user_ID, module_name, version] = module_id.split('/')
+    # version = '_'.join(version.split('.'))
+    user_ID, module_name, version = get_module_info(module_id)
     main_module = import_module(
         'modules.{user_ID}.{module_name}.{version}.src.main'.format(
             user_ID=user_ID, module_name=module_name, version=version))
@@ -135,13 +146,14 @@ class Client:
                 return ret
 
     def record_invoke(self, module_id, *args, **kwargs):
-        body = {'module_identity': module_id,
-                'project_id': self.project_id,
-                'project_type': self.project_type,
-                'api_key': self.api_key,
-                'source_file_path': self.source_file_path,
-                'user_ID': self.user_ID
-                }
+        body = {
+            'module_identity': module_id,
+            'project_id': self.project_id,
+            'project_type': self.project_type,
+            'api_key': self.api_key,
+            'source_file_path': self.source_file_path,
+            'user_ID': self.user_ID
+        }
         try:
             json.dumps({'args': args, 'kwargs': kwargs})
         except:
@@ -188,10 +200,10 @@ class Client:
             def invoke_helper(w_self, fn_name, *args, **kwargs):
                 if hasattr(super(), fn_name):
                     self.record_invoke(module_id, *args, **kwargs)
+                    if kwargs.get('with_control'):
+                        kwargs.update({'module_id': module_id})
                     return self.invoke_wrapper(getattr(super(), fn_name),
-                                               *args,
-                                               module_id=module_id,
-                                               **kwargs)
+                                               *args, **kwargs)
                 else:
                     raise AttributeError(
                         "AttributeError: '{name}' object has no "
