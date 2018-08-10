@@ -7,10 +7,13 @@ from importlib import import_module
 
 import requests
 
-SERVER = 'http://host.docker.internal:8899/pyapi'
+# ENV = 'Linux'
+ENV = 'Mac'
 
-
-# SERVER = 'http://172.17.0.1:8899/pyapi'
+if ENV == 'Mac':
+    SERVER = 'http://host.docker.internal:8899/pyapi'
+else:
+    SERVER = 'http://172.17.0.1:8899/pyapi'
 
 
 class RedirectPrints:
