@@ -84,6 +84,16 @@ class MyDockerSpawner(DockerSpawner):
         """
         return requests.put(f'{SERVER}/apps/insert_envs/{project_name}')
 
+    @staticmethod
+    def install_reset_req(project_name):
+        """
+        add env to jupyterlab
+        :param tb_port:
+        :param project_name:
+        :return: dict of res json
+        """
+        return requests.put(f'{SERVER}/project/install_reset_req/{project_name}')
+
     @gen.coroutine
     def start(self, image=None, extra_create_kwargs=None,
               extra_start_kwargs=None, extra_host_config=None):
@@ -204,6 +214,7 @@ class MyDockerSpawner(DockerSpawner):
         # update tb_port and module env to exist app
         self.update_project_tb_port(self.user.name, tb_port)
         self.insert_envs(self.user.name)
+        self.install_reset_req(self.user.name)
         # jupyterhub 0.7 prefers returning ip, port:
         return ip, port
 
