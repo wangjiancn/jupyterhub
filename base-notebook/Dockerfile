@@ -7,7 +7,7 @@ USER root
 RUN apt-get update
 
 # To change the datetime from UTC to Asia/Shanghai
-RUN apt-get install -yq graphviz tzdata nano vim wget git
+RUN apt-get install -yq graphviz tzdata nano vim wget git python3-tk
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -80,7 +80,7 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     pip --default-timeout=100 install -U opencv-python notebook seaborn keras && \
     pip --default-timeout=100 install jupyterhub==0.8.1 && \
     toggleglobalsitepackages
-    
+
 
 EXPOSE 8888
 WORKDIR /home/$NB_USER/work
