@@ -7,10 +7,13 @@ from importlib import import_module
 
 import requests
 
-SERVER = 'http://host.docker.internal:8899/pyapi'
+# ENV = 'Linux'
+ENV = 'Mac'
 
-
-# SERVER = 'http://172.17.0.1:8899/pyapi'
+if ENV == 'Mac':
+    SERVER = 'http://host.docker.internal:8899/pyapi'
+else:
+    SERVER = 'http://172.17.0.1:8899/pyapi'
 
 
 class RedirectPrints:
@@ -61,6 +64,16 @@ class Logger(object):
         pass
 
 
+def get_module_info(module_identity):
+    [encoded_name, version] = module_identity.split('/')
+    version = '_'.join(version.split('.'))
+    project = requests.get(
+        '{SERVER}/project/projects/{encoded_name}?by=encoded_name'.format(
+            SERVER=SERVER,
+            encoded_name=encoded_name)).json()['response']
+    return project['user_ID'], project['name'], version
+
+
 def module_general(module_id, action, *args, **kwargs):
     [user_ID, module_name, version] = module_id.split('/')
     version = '_'.join(version.split('.'))
@@ -69,6 +82,17 @@ def module_general(module_id, action, *args, **kwargs):
             user_ID=user_ID, module_name=module_name, version=version))
     cls = getattr(main_module, module_name)()
     return getattr(cls, action)(*args, **kwargs)
+
+
+def get_module(module_id):
+    # [user_ID, module_name, version] = module_id.split('/')
+    # version = '_'.join(version.split('.'))
+    user_ID, module_name, version = get_module_info(module_id)
+    main_module = import_module(
+        'modules.{user_ID}.{module_name}.{version}.src.main'.format(
+            user_ID=user_ID, module_name=module_name, version=version))
+    cls = getattr(main_module, module_name)
+    return cls
 
 
 def json_parser(json_obj):
@@ -87,9 +111,9 @@ class Client:
         self.source_file_path = source_file_path
 
     def controller(self, func, *args, **kw):
-        if func.__name__ == 'module_general':
+        if func.__name__ in ['run', 'predict', 'train']:
             other = {
-                'running_module': args[0]
+                'running_module': kw.pop('module_id')
             }
         else:
             other = {
@@ -119,18 +143,17 @@ class Client:
                 # log end
                 requests.put('{SERVER}/jobs/{job_id}/success'.format(
                     SERVER=SERVER, job_id=job_id)).json()
-                # print('finish run', job)
                 return ret
 
-    def run_module_general(self, action, module_id, *args, with_control=False,
-                           **kwargs):
-        body = {'module_identity': module_id,
-                'project_id': self.project_id,
-                'project_type': self.project_type,
-                'api_key': self.api_key,
-                'source_file_path': self.source_file_path,
-                'user_ID': self.user_ID
-                }
+    def record_invoke(self, module_id, *args, **kwargs):
+        body = {
+            'module_identity': module_id,
+            'project_id': self.project_id,
+            'project_type': self.project_type,
+            'api_key': self.api_key,
+            'source_file_path': self.source_file_path,
+            'user_ID': self.user_ID
+        }
         try:
             json.dumps({'args': args, 'kwargs': kwargs})
         except:
@@ -147,18 +170,76 @@ class Client:
         if invoke == 'INVALID_KEY':
             raise Exception('api key is not valid')
 
+    def invoke_wrapper(self, func, *args, with_control=False, **kwargs):
+
         if self.silent and with_control:
             with HiddenPrints():
-                return self.controller(module_general, module_id, action,
-                                       *args, **kwargs)
+                return self.controller(func, *args, **kwargs)
         elif not self.silent and with_control:
-            return self.controller(module_general, module_id, action, *args,
-                                   **kwargs)
+            return self.controller(func, *args, **kwargs)
         elif self.silent and not with_control:
             with HiddenPrints():
-                return module_general(module_id, action, *args, **kwargs)
+                return func(*args, **kwargs)
         else:
-            return module_general(module_id, action, *args, **kwargs)
+            return func(*args, **kwargs)
+
+    def run_module_general(self, action, module_id, *args, with_control=False,
+                           **kwargs):
+
+        self.record_invoke(module_id, *args, **kwargs)
+
+        return self.invoke_wrapper(module_general, module_id, action, *args,
+                                   with_control=with_control, **kwargs)
+
+    def module(self, module_id, *m_args, **m_kwargs):
+
+        cls = get_module(module_id)
+
+        class WrappedClass(cls):
+
+            def invoke_helper(w_self, fn_name, *args, **kwargs):
+                if hasattr(super(), fn_name):
+                    self.record_invoke(module_id, *args, **kwargs)
+                    if kwargs.get('with_control'):
+                        kwargs.update({'module_id': module_id})
+                    return self.invoke_wrapper(getattr(super(), fn_name),
+                                               *args, **kwargs)
+                else:
+                    raise AttributeError(
+                        "AttributeError: '{name}' object has no "
+                        "attribute f'{fn_name}'".format(name=cls.__name__,
+                                                        fn_name=fn_name))
+
+            def run(w_self, *args, **kwargs):
+                """
+                example:
+                cls = client.module('user1/project1/0.0.1')
+                cls.run({'a': 1, 'b': 2}, with_control=True)
+                cls.run({'a': 1, 'b': 2})
+                :param args:
+                :param kwargs:
+                :return:
+                """
+                frame = inspect.currentframe()
+                fn_name = inspect.getframeinfo(frame).function
+                return w_self.invoke_helper(fn_name, *args, **kwargs)
+
+            def train(w_self, *args, **kwargs):
+                frame = inspect.currentframe()
+                fn_name = inspect.getframeinfo(frame).function
+                return w_self.invoke_helper(fn_name, *args, **kwargs)
+
+            def predict(w_self, *args, **kwargs):
+                frame = inspect.currentframe()
+                fn_name = inspect.getframeinfo(frame).function
+                return w_self.invoke_helper(fn_name, *args, **kwargs)
+
+            def load_model(w_self, *args, **kwargs):
+                frame = inspect.currentframe()
+                fn_name = inspect.getframeinfo(frame).function
+                return w_self.invoke_helper(fn_name, *args, **kwargs)
+
+        return WrappedClass(*m_args, **m_kwargs)
 
     def run(self, module_id, *args, with_control=False, **kwargs):
         return self.run_module_general('run', module_id, *args,

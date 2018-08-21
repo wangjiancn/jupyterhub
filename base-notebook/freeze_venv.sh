@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+PREFIX=faas
+if [ ${1} ] ; then
+    PREFIX=${1}
+fi
+
 WORK=/home/jovyan/work
 
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python
@@ -7,8 +12,8 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 export WORKON_HOME=${WORK}
 
-workon localenv
+workon .localenv
 echo "freezing env"
-pip freeze > /home/jovyan/work/faas_requirements.txt
+pip freeze > /home/jovyan/work/${PREFIX}_requirements.txt
 echo "freeze env done"
 
