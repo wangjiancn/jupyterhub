@@ -769,7 +769,7 @@ c.JupyterHub.base_url = '/hub_api'
 #  their own.
 #
 #  If set to 0, no limit is enforced.
-# c.JupyterHub.concurrent_spawn_limit = 100
+c.JupyterHub.concurrent_spawn_limit = 200
 
 ## The config file to load
 # c.JupyterHub.config_file = 'jupyterhub_config.py'
