@@ -84,7 +84,7 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     #make basenv
     mkvirtualenv basenv && \
     workon basenv && \
-    pip --default-timeout=100 install -U opencv-python notebook seaborn keras && \
+    pip --default-timeout=100 install -U opencv-python nltk notebook seaborn keras && \
     pip --default-timeout=100 install jupyterhub==0.8.1 && \
     toggleglobalsitepackages
 
