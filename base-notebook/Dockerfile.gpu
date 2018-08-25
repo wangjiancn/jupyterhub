@@ -15,6 +15,11 @@ RUN apt-get update
 
 # To change the datetime from UTC to Asia/Shanghai
 RUN apt-get install -yq graphviz tzdata nano vim wget git python3-tk
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN apt-get install -y nodejs
+# After install node, python2 will be installed
+# move back python3 to be default python
+#RUN ln -snf /usr/bin/python3 /usr/bin/python
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -64,6 +69,9 @@ RUN chown -R jovyan:users /home/jovyan/dataset
 ADD pip.conf /home/jovyan/.pip/pip.conf
 RUN chown -R jovyan:users /home/jovyan/.pip
 
+ADD pyls /home/jovyan/pyls
+RUN chown -R jovyan:users /home/jovyan/pyls
+
 RUN pip install virtualenvwrapper virtualenv-clone
 
 USER $NB_UID
@@ -72,14 +80,16 @@ USER $NB_UID
 RUN mkdir /home/$NB_USER/work && \
     fix-permissions /home/$NB_USER
 
-ENV VIRTUALENVWRAPPER_PYTHON $USR_DIR/bin/python
+ENV VIRTUALENVWRAPPER_PYTHON $USR_DIR/bin/python3
 ENV VIRTUALENVWRAPPER_VIRTUALENV $LOCAL_DIR/bin/virtualenv
 SHELL ["/bin/bash", "-c"]
+
+RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv jlenv && \
     workon jlenv && \
-    pip --default-timeout=100 install jupyterlab==0.31.1 && \
+    pip --default-timeout=100 install jupyterlab==0.31.1 'python-language-server[all]' && \
     toggleglobalsitepackages && \
     #make basenv
     mkvirtualenv basenv && \
