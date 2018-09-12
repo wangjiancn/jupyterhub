@@ -616,6 +616,7 @@ c.JupyterHub.base_url = '/hub_api'
 #
 #  If set to 0, no limit is enforced.
 # c.JupyterHub.concurrent_spawn_limit = 100
+c.JupyterHub.concurrent_spawn_limit = 200
 
 ## The config file to load
 # c.JupyterHub.config_file = 'jupyterhub_config.py'
@@ -1266,10 +1267,10 @@ user_path = os.path.abspath(cwd). \
 # c.DockerSpawner.image = 'singleuser:latest'
 
 # dev
-c.DockerSpawner.image = 'magicalion/singleuser:dev'
+# c.DockerSpawner.image = 'magicalion/singleuser:dev'
 
 # cpu machine
-# c.DockerSpawner.image = 'magicalion/singleuser:latest'
+c.DockerSpawner.image = 'magicalion/singleuser:latest'
 
 # gpu machine
 # c.DockerSpawner.image = 'magicalion/singleuser:latest-gpu'
