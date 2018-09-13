@@ -2,6 +2,7 @@
 WORK=/home/jovyan/work
 HOME=/home/jovyan
 JOB_ID=${1}
+SCRIPT=${2}
 
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
@@ -17,11 +18,12 @@ workon ${JOB_ID}
 
 add2virtualenv /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages
 
-if [ ! -f ${WORK}/${2} ] ; then
+if [ ! -f ${WORK}/${SCRIPT} ] ; then
     echo 'script path not exists'
     exit 1
 fi
 
 cd ${WORK}
-${ENV_PATH}/bin/python ${2}
-#python3 -m http.server 8888
+${ENV_PATH}/bin/python ${SCRIPT}
+SUCCESS=$?
+${ENV_PATH}/bin/python /home/jovyan/finish_job.py ${JOB_ID} ${SUCCESS}
