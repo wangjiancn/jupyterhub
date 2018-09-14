@@ -23,7 +23,14 @@ if [ ! -f ${WORK}/${SCRIPT} ] ; then
     exit 1
 fi
 
+export NB_CLIENT_ENV=k8s
+
 cd ${WORK}
+echo 'SYSTEM: preparing env...'
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
+echo 'SYSTEM: running...'
 ${ENV_PATH}/bin/python ${SCRIPT}
 SUCCESS=$?
-${ENV_PATH}/bin/python /home/jovyan/finish_job.py ${JOB_ID} ${SUCCESS}
+echo 'SYSTEM: finishing...'
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
+echo 'SYSTEM: done!'

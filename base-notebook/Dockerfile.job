@@ -92,8 +92,8 @@ RUN chown jovyan:users /home/jovyan/remove_venv.sh
 ADD freeze_venv.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/freeze_venv.sh
 
-ADD finish_job.py /home/jovyan
-RUN chown jovyan:users /home/jovyan/finish_job.py
+ADD job_funcs.py /home/jovyan
+RUN chown jovyan:users /home/jovyan/job_funcs.py
 
 # commented out to run as root, may only necessary for hostPath volume
 # USER $NB_UID
