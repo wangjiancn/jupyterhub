@@ -26,11 +26,11 @@ fi
 export NB_CLIENT_ENV=k8s
 
 cd ${WORK}
-echo 'SYSTEM: preparing env...'
+echo 'SYSTEM: Preparing env...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
-echo 'SYSTEM: running...'
+echo 'SYSTEM: Running...'
 ${ENV_PATH}/bin/python ${SCRIPT}
 SUCCESS=$?
-echo 'SYSTEM: finishing...'
+echo 'SYSTEM: Finishing...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
-echo 'SYSTEM: done!'
+echo 'SYSTEM: Done!'
