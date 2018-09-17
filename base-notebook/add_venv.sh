@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 M_DIR=/home/jovyan/modules/${1}
+JOB_ID=${2}
 WORK=/home/jovyan/work
 PACKAGE_DIR=${M_DIR}/.localenv/lib/python3.5/site-packages
 
@@ -12,10 +13,15 @@ if [ ! -d ${M_DIR}  ] || [ ! -d ${PACKAGE_DIR} ] ; then
     exit
 fi
 
-export WORKON_HOME=${WORK}
-echo "activating env"
-# FIXME will only work when one workon, like now
-workon .localenv
+if [ ${JOB_ID} ] ; then
+    echo "activating env"
+    workon ${JOB_ID}
+else
+    export WORKON_HOME=${WORK}
+    echo "activating env"
+    workon .localenv
+fi
+
 echo "adding env"
 add2virtualenv ${PACKAGE_DIR}
 echo "add env done"

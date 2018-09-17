@@ -27,10 +27,19 @@ export NB_CLIENT_ENV=k8s
 
 cd ${WORK}
 echo 'SYSTEM: Preparing env...'
+if [ -f ${WORK}/requirements.txt ] ; then
+    echo 'SYSTEM: Installing requirements.txt...'
+    ${ENV_PATH}/bin/pip install  -r ${WORK}/requirements.txt
+fi
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
 echo 'SYSTEM: Running...'
 ${ENV_PATH}/bin/python ${SCRIPT}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
+if [ ${SUCCESS} == 1 ] ; then
+    echo 'SYSTEM: Error Exists!'
+    exit 1
+fi
 echo 'SYSTEM: Done!'
+exit 0

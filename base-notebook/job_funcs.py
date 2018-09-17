@@ -8,6 +8,7 @@ ENV = 'DEV'
 
 if ENV == 'DEV':
     PY_SERVER = 'http://192.168.31.23:8899/pyapi'
+    # PY_SERVER = 'http://192.168.31.23:8899/pyapi'
 elif ENV == 'PROD':
     PY_SERVER = 'http://momodel-ai.s3.natapp.cc/pyapi'
 elif ENV == 'MO':
