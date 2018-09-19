@@ -27,6 +27,8 @@ export NB_CLIENT_ENV=k8s
 
 cd ${WORK}
 echo 'SYSTEM: Preparing env...'
+#echo 'sleeping...'
+#sleep 525600
 if [ -f ${WORK}/requirements.txt ] ; then
     echo 'SYSTEM: Installing requirements.txt...'
     ${ENV_PATH}/bin/pip install  -r ${WORK}/requirements.txt
