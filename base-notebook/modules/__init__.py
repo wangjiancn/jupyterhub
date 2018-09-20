@@ -9,15 +9,14 @@ import requests
 
 # ENV = 'Linux'
 ENV = 'Mac'
-if 'NB_CLIENT_ENV' in os.environ:
-    ENV = os.environ.get('NB_CLIENT_ENV')
 
 if ENV == 'Mac':
     SERVER = 'http://host.docker.internal:8899/pyapi'
-elif ENV == 'k8s':
-    SERVER = 'http://192.168.31.23:8899/pyapi'
 else:
     SERVER = 'http://172.17.0.1:8899/pyapi'
+
+if 'PY_SERVER' in os.environ:
+    SERVER = os.environ.get('PY_SERVER')
 
 
 class RedirectPrints:

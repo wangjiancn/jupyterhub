@@ -23,8 +23,6 @@ if [ ! -f ${WORK}/${SCRIPT} ] ; then
     exit 1
 fi
 
-export NB_CLIENT_ENV=k8s
-
 cd ${WORK}
 echo 'SYSTEM: Preparing env...'
 #echo 'sleeping...'
