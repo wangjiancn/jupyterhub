@@ -7,20 +7,21 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 export WORKON_HOME=${WORK}
 
-if [ -e ${WORK}/localenv  ] ; then
-    # for old workspace, remove old localenv directory
-    rm -rf ${WORK}/localenv
-fi
-
-if [ ! -e ${WORK}/.localenv  ] ; then
-    virtualenv-clone /home/jovyan/.virtualenvs/jlenv ${WORK}/.localenv
-fi
-#mkvirtualenv .localenv
 workon .localenv
 
+#echo 0 `date`
+#if [ ! -e ${WORK}/.localenv  ] ; then
+#    virtualenv-clone /home/jovyan/.virtualenvs/jlenv ${WORK}/.localenv
+#fi
+#echo 1 `date`
+##mkvirtualenv .localenv
+#workon .localenv
+#echo 2 `date`
+#
 add2virtualenv /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages
+
+#echo 3 `date`
 
 tensorboard --logdir=${WORK}/logs --host=0.0.0.0 &
 cd /home/jovyan/pyls && npm run start:ext &
 ${WORK}/.localenv/bin/jupyter labhub --ip=0.0.0.0 --NotebookApp.allow_origin=* --NotebookApp.iopub_data_rate_limit=10000000000 --NotebookApp.notebook_dir=${WORK}
-#python3 -m http.server 8888
