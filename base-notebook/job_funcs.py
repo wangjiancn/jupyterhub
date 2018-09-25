@@ -1,20 +1,9 @@
 # -*- coding: UTF-8 -*-
+import os
 import sys
 import requests
 
-ENV = 'DEV'
-# ENV = 'PROD'
-# ENV = 'MO'
-
-if ENV == 'DEV':
-    PY_SERVER = 'http://192.168.31.23:8899/pyapi'
-    # PY_SERVER = 'http://192.168.31.23:8899/pyapi'
-elif ENV == 'PROD':
-    PY_SERVER = 'http://momodel-ai.s3.natapp.cc/pyapi'
-elif ENV == 'MO':
-    PY_SERVER = 'http://36.26.77.39:8899/pyapi'
-else:
-    PY_SERVER = 'htto://127.0.0.1:8899/pyapi'
+PY_SERVER = os.environ.get('PY_SERVER')
 
 func_name = sys.argv[1]
 job_id = sys.argv[2]
