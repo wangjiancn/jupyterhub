@@ -3,6 +3,7 @@ WORK=/home/jovyan/work
 HOME=/home/jovyan
 JOB_ID=${1}
 SCRIPT=${2}
+RUN_FUNC=${3}
 
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
@@ -38,7 +39,7 @@ echo 'SYSTEM: Preparing env...'
 #fi
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
 echo 'SYSTEM: Running...'
-${ENV_PATH}/bin/python ${SCRIPT}
+${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
