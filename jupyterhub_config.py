@@ -66,8 +66,6 @@ class MyKubeSpawner(KubeSpawner):
             [s if s in safe_chars else '-' for s in self.user.name.lower()])
         safe_username = escapism.escape(self.user.name, safe=safe_chars,
                                         escape_char='-').lower()
-        print(self.user.name)
-
         split_username = self.user.name.split('+')
         user_ID = split_username[0]
         if len(split_username) > 1:
@@ -1473,7 +1471,13 @@ c.KubeSpawner.extra_container_config = {
             'containerPort': 3000,
             'name': 'pyls-port'
         },
-    ]
+    ],
+    'resources': {
+        'limits': {
+            'cpu': '1',
+            'memory': '2Gi'
+        }
+    }
 }
 # c.DockerSpawner.remove_containers = True
 # c.DockerSpawner.container_ip = '0.0.0.0'
