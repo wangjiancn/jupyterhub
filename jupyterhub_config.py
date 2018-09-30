@@ -161,8 +161,6 @@ class MyKubeSpawner(KubeSpawner):
         #     host_config.update({'extra_hosts': {
         #         'host.docker.internal': '172.17.0.1'
         #     }})
-        # TODO use os.environ.get('JUPYTERHUB_API_URL') inside pods
-
         # If we run into a 409 Conflict error, it means a pod with the
         # same name already exists. We stop it, wait for it to stop, and
         # try again. We try 4 times, and if it still fails we give up.
