@@ -1432,20 +1432,23 @@ c.Authenticator.admin_users = {'admin'}
 # user_path = os.path.abspath(cwd). \
 #     replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
 
-# local build
-# c.DockerSpawner.image = 'singleuser:latest'
+ENV = 'DEV'
+# ENV = 'PROD'
+# ENV = 'MO'
+# ENV = 'LOCAL'
 
 # dev
-c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
-
-# cpu machine
-# c.DockerSpawner.image = 'magicalion/singleuser:latest'
+if ENV == 'MO':
+    c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
+else:
+    c.DockerSpawner.image = 'magicalion/singleuser:dev'
 
 # gpu machine
 # c.DockerSpawner.image = 'magicalion/singleuser:latest-gpu'
 # c.DockerSpawner.extra_host_config = {
 #     'runtime': 'nvidia',
 # }
+
 c.KubeSpawner.service_account = 'default'
 
 volume_name = 'notebook-volume-{user_ID}-{project_name}'
@@ -1455,8 +1458,18 @@ c.KubeSpawner.http_timeout = 60 * 5
 c.KubeSpawner.uid = 1000
 c.KubeSpawner.gid = 100
 c.KubeSpawner.fs_gid = 100
-c.KubeSpawner.tb_port = 6006
-c.KubeSpawner.pyls_port = 3000
+if ENV == 'DEV':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://192.168.31.23:8899/pyapi'
+    }
+elif ENV == 'PROD':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://192.168.31.11:8899/pyapi'
+    }
+elif ENV == 'MO':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
+    }
 c.KubeSpawner.extra_container_config = {
     'ports': [
         {
