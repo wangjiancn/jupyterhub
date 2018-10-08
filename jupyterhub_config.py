@@ -1439,7 +1439,7 @@ ENV = 'DEV'
 if ENV == 'MO':
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
-    c.DockerSpawner.image = 'magicalion/singleuser:dev'
+    c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
 
 # gpu machine
 # c.DockerSpawner.image = 'magicalion/singleuser:latest-gpu'
@@ -1458,7 +1458,7 @@ c.KubeSpawner.gid = 100
 c.KubeSpawner.fs_gid = 100
 if ENV == 'DEV':
     c.KubeSpawner.environment = {
-        'PY_SERVER': 'http://192.168.31.23:8899/pyapi'
+        'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
     }
 elif ENV == 'PROD':
     c.KubeSpawner.environment = {
