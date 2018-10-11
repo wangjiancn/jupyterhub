@@ -1456,6 +1456,7 @@ c.KubeSpawner.http_timeout = 60 * 5
 c.KubeSpawner.uid = 1000
 c.KubeSpawner.gid = 100
 c.KubeSpawner.fs_gid = 100
+CLAIM_NAME = 'nfs-pvc-user-dir'
 if ENV == 'DEV':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
@@ -1465,12 +1466,10 @@ elif ENV == 'PROD':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://192.168.31.11:8899/pyapi'
     }
-    CLAIM_NAME = 'nfs-pvc-user-dir'
 elif ENV == 'MO':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
     }
-    CLAIM_NAME = 'nfs-pvc-user-dir'
 c.KubeSpawner.extra_container_config = {
     'ports': [
         {
