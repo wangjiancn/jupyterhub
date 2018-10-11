@@ -1510,4 +1510,4 @@ c.KubeSpawner.volumes = [
         }
     },
 ]
-# NOTE: sudo route -n add -net 172.16.0.0/16 192.168.31.11
+# NOTE:  sudo route -n add -net 172.16.0.0/16 192.168.31.11
