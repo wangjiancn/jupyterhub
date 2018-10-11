@@ -1460,14 +1460,17 @@ if ENV == 'DEV':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
     }
+    CLAIM_NAME = 'nfs-pvc-user-dir-dev'
 elif ENV == 'PROD':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://192.168.31.11:8899/pyapi'
     }
+    CLAIM_NAME = 'nfs-pvc-user-dir'
 elif ENV == 'MO':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
     }
+    CLAIM_NAME = 'nfs-pvc-user-dir'
 c.KubeSpawner.extra_container_config = {
     'ports': [
         {
@@ -1504,7 +1507,7 @@ c.KubeSpawner.volumes = [
     {
         "name": volume_name,
         "persistentVolumeClaim": {
-            "claimName": 'nfs-pvc-user-dir-dev'
+            "claimName": CLAIM_NAME
         }
     },
 ]
