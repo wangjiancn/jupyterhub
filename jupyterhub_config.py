@@ -1456,10 +1456,12 @@ c.KubeSpawner.http_timeout = 60 * 5
 c.KubeSpawner.uid = 1000
 c.KubeSpawner.gid = 100
 c.KubeSpawner.fs_gid = 100
+CLAIM_NAME = 'nfs-pvc-user-dir'
 if ENV == 'DEV':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
     }
+    CLAIM_NAME = 'nfs-pvc-user-dir-dev'
 elif ENV == 'PROD':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://192.168.31.11:8899/pyapi'
@@ -1504,8 +1506,8 @@ c.KubeSpawner.volumes = [
     {
         "name": volume_name,
         "persistentVolumeClaim": {
-            "claimName": 'nfs-pvc-user-dir-dev'
+            "claimName": CLAIM_NAME
         }
     },
 ]
-# NOTE: sudo route -n add -net 172.16.0.0/16 192.168.31.11
+# NOTE:  sudo route -n add -net 172.16.0.0/16 192.168.31.11
