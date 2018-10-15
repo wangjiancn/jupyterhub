@@ -15,6 +15,9 @@ if ENV == 'Mac':
 else:
     SERVER = 'http://172.17.0.1:8899/pyapi'
 
+if 'PY_SERVER' in os.environ:
+    SERVER = os.environ.get('PY_SERVER')
+
 
 class RedirectPrints:
     def __init__(self, job_id):

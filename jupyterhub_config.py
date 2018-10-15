@@ -22,70 +22,66 @@ class SuperSecureAuthenticator(Authenticator):
             return tmp_username
 
 
-from dockerspawner import DockerSpawner
+import sys
+import string
+
+from kubespawner import KubeSpawner
 from traitlets import default
+from kubernetes.client.rest import ApiException
+from jupyterhub.utils import exponential_backoff
+import escapism
+
 import jupyterhub
 import requests
 
 SERVER = 'http://localhost:5005'
 
 
-def default_format_volume_name(template, spawner):
-    return template.format(username=spawner.user.name,
-                           user_ID=spawner.user.name.split('+')[0],
-                           project_name=spawner.user.name.split('+')[1])
-
-
-class MyDockerSpawner(DockerSpawner):
-    tb_port = '6006'
+class MyKubeSpawner(KubeSpawner):
+    """
+    deal with tb and pyls ports, run some shell scripts when starting
+    """
+    tb_port = 6006
     tb_host = None
     tb_proxy_spec = None
-
-    pyls_port = '3000'
+    pyls_port = 3000
     pyls_host = None
     pyls_proxy_spec = None
 
-    @property
-    def extra_create_kwargs(self):
-        return {"ports": {'%i/tcp' % self.port: None, '6006/tcp': None,
-                          '3000/tcp': None}}
+    def _expand_user_properties(self, template):
+        # Make sure username and servername match the restrictions for DNS labels
+        # Note: '-' is not in safe_chars, as it is being used as escape character
+        safe_chars = set(string.ascii_lowercase + string.digits)
 
-    @property
-    def extra_host_config(self):
-        return {"port_bindings": {self.port: (self.host_ip,),
-                                  '6006': (self.host_ip,),
-                                  '3000': (self.host_ip,)},
-                # 'runtime': 'nvidia'
-                }
+        # Set servername based on whether named-server initialised
+        if self.name:
+            servername = '-{}'.format(self.name)
+            safe_servername = escapism.escape(servername, safe=safe_chars,
+                                              escape_char='-').lower()
+        else:
+            servername = ''
+            safe_servername = ''
 
-    @default('format_volume_name')
-    def _get_default_format_volume_name(self):
-        return default_format_volume_name
-
-    @gen.coroutine
-    def get_tb_port(self):
-        tb_resp = yield self.docker('port', self.container_id, self.tb_port)
-        port = int(tb_resp[0]['HostPort'])
-        return port
-
-    @gen.coroutine
-    def get_pyls_port(self):
-        pyls_resp = yield self.docker('port', self.container_id,
-                                      self.pyls_port)
-        port = int(pyls_resp[0]['HostPort'])
-        return port
-
-    @staticmethod
-    def update_project_tb_port(project_name, tb_port):
-        """
-        update tb port when docker restarted
-        :param tb_port:
-        :param project_name:
-        :return: dict of res json
-        """
-        print('update project tb_port: ', project_name, tb_port)
-        return requests.put(f'{SERVER}/project/projects/{project_name}?by=name'
-                            , json={'tb_port': str(tb_port)})
+        legacy_escaped_username = ''.join(
+            [s if s in safe_chars else '-' for s in self.user.name.lower()])
+        safe_username = escapism.escape(self.user.name, safe=safe_chars,
+                                        escape_char='-').lower()
+        split_username = self.user.name.split('+')
+        user_ID = split_username[0]
+        if len(split_username) > 1:
+            project_name = split_username[1]
+        else:
+            project_name = user_ID
+        return template.format(
+            userid=self.user.id,
+            username=safe_username,
+            user_ID=user_ID,
+            project_name=project_name,
+            unescaped_username=self.user.name,
+            legacy_escape_username=legacy_escaped_username,
+            servername=safe_servername,
+            unescaped_servername=servername
+        )
 
     @staticmethod
     def insert_envs(project_name):
@@ -109,135 +105,141 @@ class MyDockerSpawner(DockerSpawner):
             f'{SERVER}/project/install_reset_req/{project_name}')
 
     @gen.coroutine
-    def start(self, image=None, extra_create_kwargs=None,
-              extra_start_kwargs=None, extra_host_config=None):
-        """Start the single-user server in a docker container. You can override
-        the default parameters passed to `create_container` through the
-        `extra_create_kwargs` dictionary and passed to `start` through the
-        `extra_start_kwargs` dictionary.  You can also override the
-        'host_config' parameter passed to `create_container` through the
-        `extra_host_config` dictionary.
+    def _start(self):
+        """Start the user's pod"""
+        # record latest event so we don't include old
+        # events from previous pods in self.events
+        # track by order and name instead of uid
+        # so we get events like deletion of a previously stale
+        # pod if it's part of this spawn process
+        events = self.events
+        if events:
+            self._last_event = events[-1].metadata.uid
 
-        Per-instance `extra_create_kwargs`, `extra_start_kwargs`, and
-        `extra_host_config` take precedence over their global counterparts.
+        if self.storage_pvc_ensure:
+            # Try and create the pvc. If it succeeds we are good. If
+            # returns a 409 indicating it already exists we are good. If
+            # it returns a 403, indicating potential quota issue we need
+            # to see if pvc already exists before we decide to raise the
+            # error for quota being exceeded. This is because quota is
+            # checked before determining if the PVC needed to be
+            # created.
 
-        """
-        container = yield self.get_container()
-        if container and self.remove_containers:
-            self.log.warning(
-                "Removing container that should have been cleaned up: %s (id: %s)",
-                self.container_name, self.container_id[:7])
-            # remove the container, as well as any associated volumes
-            yield self.docker('remove_container', self.container_id, v=True)
-            container = None
+            pvc = self.get_pvc_manifest()
 
-        if container is None:
-            image = image or self.image
-            if self._user_set_cmd:
-                cmd = self.cmd
-            else:
-                image_info = yield self.docker('inspect_image', image)
-                cmd = image_info['Config']['Cmd']
-            cmd = cmd + self.get_args()
+            try:
+                yield self.asynchronize(
+                    self.api.create_namespaced_persistent_volume_claim,
+                    namespace=self.namespace,
+                    body=pvc
+                )
+            except ApiException as e:
+                if e.status == 409:
+                    self.log.info(
+                        "PVC " + self.pvc_name + " already exists, so did not create new pvc.")
 
-            # build the dictionary of keyword arguments for create_container
-            create_kwargs = dict(
-                image=image,
-                environment=self.get_env(),
-                volumes=self.volume_mount_points,
-                name=self.container_name,
-                command=cmd,
+                elif e.status == 403:
+                    t, v, tb = sys.exc_info()
+
+                    try:
+                        yield self.asynchronize(
+                            self.api.read_namespaced_persistent_volume_claim,
+                            name=self.pvc_name,
+                            namespace=self.namespace)
+
+                    except ApiException as e:
+                        raise v.with_traceback(tb)
+
+                    self.log.info(
+                        "PVC " + self.pvc_name + " already exists, possibly have reached quota though.")
+
+                else:
+                    raise
+
+        # from sys import platform
+        # if platform != 'darwin':
+        #     host_config.update({'extra_hosts': {
+        #         'host.docker.internal': '172.17.0.1'
+        #     }})
+        # If we run into a 409 Conflict error, it means a pod with the
+        # same name already exists. We stop it, wait for it to stop, and
+        # try again. We try 4 times, and if it still fails we give up.
+        # FIXME: Have better / cleaner retry logic!
+        retry_times = 4
+        pod = yield self.get_pod_manifest()
+        if self.modify_pod_hook:
+            pod = yield gen.maybe_future(self.modify_pod_hook(self, pod))
+        for i in range(retry_times):
+            try:
+                # import yaml
+                # with open('singleuser.yml', 'w') as stream:
+                #     yaml.dump(pod.to_dict(), stream, default_flow_style=False)
+                yield self.asynchronize(
+                    self.api.create_namespaced_pod,
+                    self.namespace,
+                    pod,
+                )
+                break
+            except ApiException as e:
+                if e.status != 409:
+                    # We only want to handle 409 conflict errors
+                    self.log.exception("Failed for %s", pod.to_str())
+                    raise
+                self.log.info('Found existing pod %s, attempting to kill',
+                              self.pod_name)
+                # TODO: this should show up in events
+                yield self.stop(True)
+
+                self.log.info(
+                    'Killed pod %s, will try starting singleuser pod again',
+                    self.pod_name)
+        else:
+            raise Exception(
+                'Can not create user pod %s already exists & could not be deleted' % self.pod_name)
+
+        # we need a timeout here even though start itself has a timeout
+        # in order for this coroutine to finish at some point.
+        # using the same start_timeout here
+        # essentially ensures that this timeout should never propagate up
+        # because the handler will have stopped waiting after
+        # start_timeout, starting from a slightly earlier point.
+        try:
+            yield exponential_backoff(
+                lambda: self.is_pod_running(
+                    self.pod_reflector.pods.get(self.pod_name, None)),
+                'pod/%s did not start in %s seconds!' % (
+                    self.pod_name, self.start_timeout),
+                timeout=self.start_timeout,
+            )
+        except TimeoutError:
+            if self.pod_name not in self.pod_reflector.pods:
+                # if pod never showed up at all,
+                # restart the pod reflector which may have become disconnected.
+                self.log.error(
+                    "Pod %s never showed up in reflector, restarting pod reflector",
+                    self.pod_name,
+                )
+                self._start_watching_pods(replace=True)
+            raise
+
+        pod = self.pod_reflector.pods[self.pod_name]
+        self.pod_id = pod.metadata.uid
+        if self.event_reflector:
+            self.log.debug(
+                'pod %s events before launch: %s',
+                self.pod_name,
+                "\n".join(
+                    [
+                        "%s [%s] %s" % (
+                            event.last_timestamp, event.type, event.message)
+                        for event in self.events
+                    ]
+                ),
             )
 
-            # ensure internal port is exposed
-            create_kwargs['ports'] = {'%i/tcp' % self.port: None}
-
-            create_kwargs.update(self.extra_create_kwargs)
-            if extra_create_kwargs:
-                create_kwargs.update(extra_create_kwargs)
-
-            # build the dictionary of keyword arguments for host_config
-            host_config = dict(binds=self.volume_binds, links=self.links)
-
-            if hasattr(self, 'mem_limit') and self.mem_limit is not None:
-                # If jupyterhub version > 0.7, mem_limit is a traitlet that can
-                # be directly configured. If so, use it to set mem_limit.
-                # this will still be overriden by extra_host_config
-                host_config['mem_limit'] = self.mem_limit
-
-            if not self.use_internal_ip:
-                host_config['port_bindings'] = {self.port: (self.host_ip,)}
-            host_config.update(self.extra_host_config)
-            host_config.setdefault('network_mode', self.network_name)
-
-            if extra_host_config:
-                host_config.update(extra_host_config)
-            from sys import platform
-            if platform != 'darwin':
-                host_config.update({'extra_hosts': {
-                    'host.docker.internal': '172.17.0.1'
-                }})
-
-            self.log.debug("Starting host with config: %s", host_config)
-
-            host_config = self.client.create_host_config(**host_config)
-            create_kwargs.setdefault('host_config', {}).update(host_config)
-            # create the container
-            resp = yield self.docker('create_container', **create_kwargs)
-            self.container_id = resp['Id']
-            self.log.info(
-                "Created container '%s' (id: %s) from image %s",
-                self.container_name, self.container_id[:7], image)
-
-        else:
-            self.log.info(
-                "Found existing container '%s' (id: %s)",
-                self.container_name, self.container_id[:7])
-            # Handle re-using API token.
-            # Get the API token from the environment variables
-            # of the running container:
-            for line in container['Config']['Env']:
-                if line.startswith(
-                        ('JPY_API_TOKEN=', 'JUPYTERHUB_API_TOKEN=')):
-                    self.api_token = line.split('=', 1)[1]
-                    break
-
-        # TODO: handle unpause
-        self.log.info(
-            "Starting container '%s' (id: %s)",
-            self.container_name, self.container_id[:7])
-
-        # build the dictionary of keyword arguments for start
-        start_kwargs = {}
-        start_kwargs.update(self.extra_start_kwargs)
-        if extra_start_kwargs:
-            start_kwargs.update(extra_start_kwargs)
-
-        # start the container
-        yield self.docker('start', self.container_id, **start_kwargs)
-
-        ip, port = yield self.get_ip_and_port()
-        if jupyterhub.version_info < (0, 7):
-            # store on user for pre-jupyterhub-0.7:
-            self.user.server.ip = ip
-            self.user.server.port = port
-
-        tb_port = yield self.get_tb_port()
-        self.tb_host = self.server.host.replace(str(self.user.server.port),
-                                                str(tb_port))
-        pyls_port = yield self.get_pyls_port()
-        self.pyls_host = self.server.host.replace(str(self.user.server.port),
-                                                  str(pyls_port))
-
-        self.tb_proxy_spec = self.proxy_spec.replace('/user/', '/tb/')
-        self.pyls_proxy_spec = self.proxy_spec.replace('/user/', '/pyls/')
-
-        # update tb_port and module env to exist app
-        self.update_project_tb_port(self.user.name, tb_port)
         self.insert_envs(self.user.name)
         self.install_reset_req(self.user.name)
-        # jupyterhub 0.7 prefers returning ip, port:
-        return ip, port
+        return (pod.status.pod_ip, self.port)
 
 
 import os
@@ -517,6 +519,10 @@ class MyProxy(ConfigurableHTTPProxy):
     def add_tb(self, user, server_name='', client=None):
         """Add a user's server to the proxy table."""
         spawner = user.spawners[server_name]
+        spawner.tb_host = spawner.server.host.replace(
+            str(spawner.user.server.port),
+            str(spawner.tb_port))
+        spawner.tb_proxy_spec = spawner.proxy_spec.replace('/user/', '/tb/')
         self.log.info("Adding user %s's tensorboard to proxy %s => %s",
                       user.name, spawner.tb_proxy_spec, spawner.tb_host,
                       )
@@ -542,6 +548,10 @@ class MyProxy(ConfigurableHTTPProxy):
     def add_pyls(self, user, server_name='', client=None):
         """Add a user's server to the proxy table."""
         spawner = user.spawners[server_name]
+        spawner.pyls_host = spawner.server.host.replace(
+            str(spawner.user.server.port),
+            str(spawner.pyls_port))
+        spawner.pyls_proxy_spec = spawner.proxy_spec.replace('/user/', '/pyls/')
         self.log.info("Adding user %s's tensorboard to proxy %s => %s",
                       user.name, spawner.pyls_proxy_spec, spawner.pyls_host,
                       )
@@ -564,6 +574,8 @@ class MyProxy(ConfigurableHTTPProxy):
         )
 
     def add_route(self, routespec, target, data, **kwargs):
+        if not routespec:
+            return
         body = data or {}
         body['target'] = target
         body['jupyterhub'] = True
@@ -693,7 +705,7 @@ c.JupyterHub.admin_access = True
 # c.JupyterHub.admin_users = set()
 
 ## Allow named single-user servers per user
-# c.JupyterHub.allow_named_servers = False
+c.JupyterHub.allow_named_servers = True
 
 ## Answer yes to any questions (e.g. confirm overwrite)
 # c.JupyterHub.answer_yes = False
@@ -726,6 +738,7 @@ c.JupyterHub.api_tokens = {
 #    where `handler` is the calling web.RequestHandler,
 #    and `data` is the POST form data from the login page.
 c.JupyterHub.authenticator_class = SuperSecureAuthenticator
+# c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'
 # c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
 ## The base URL of the entire application
 c.JupyterHub.base_url = '/hub_api'
@@ -752,7 +765,7 @@ c.JupyterHub.base_url = '/hub_api'
 #  shutdown the Hub, leaving everything else running.
 #
 #  The Hub should be able to resume from database state.
-# c.JupyterHub.cleanup_servers = True
+c.JupyterHub.cleanup_servers = False
 
 ## Maximum number of concurrent users that can be spawning at a time.
 #
@@ -933,7 +946,8 @@ c.JupyterHub.proxy_class = MyProxy
 #
 #  Should be a subclass of Spawner.
 # c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
-c.JupyterHub.spawner_class = MyDockerSpawner
+# c.JupyterHub.spawner_class = MyDockerSpawner
+c.JupyterHub.spawner_class = MyKubeSpawner
 
 ## Path to SSL certificate file for the public facing interface of the proxy
 #
@@ -1410,20 +1424,22 @@ c.Authenticator.admin_users = {'admin'}
 ## The number of threads to allocate for encryption
 # c.CryptKeeper.n_threads = 8
 
-import os
+# import os
+#
+# cwd = os.getcwd()
+# user_path = os.path.abspath(cwd). \
+#     replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
 
-cwd = os.getcwd()
-user_path = os.path.abspath(cwd). \
-    replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
-
-# local build
-# c.DockerSpawner.image = 'singleuser:latest'
+ENV = 'DEV'
+# ENV = 'PROD'
+# ENV = 'MO'
+# ENV = 'LOCAL'
 
 # dev
-# c.DockerSpawner.image = 'magicalion/singleuser:dev'
-
-# cpu machine
-c.DockerSpawner.image = 'magicalion/singleuser:latest'
+if ENV == 'MO':
+    c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
+else:
+    c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
 
 # gpu machine
 # c.DockerSpawner.image = 'magicalion/singleuser:latest-gpu'
@@ -1431,21 +1447,72 @@ c.DockerSpawner.image = 'magicalion/singleuser:latest'
 #     'runtime': 'nvidia',
 # }
 
+c.KubeSpawner.service_account = 'default'
+# c.KubeSpawner.namespace = 'jupyter'
 
-c.DockerSpawner.start_timeout = 120
-c.DockerSpawner.http_timeout = 120
-c.DockerSpawner.remove_containers = True
-c.DockerSpawner.container_ip = '0.0.0.0'
-c.DockerSpawner.host_ip = '0.0.0.0'
-c.DockerSpawner.volumes = \
-    {
-        user_path: '/home/jovyan/work',
-        # '/Users/zhaofengli/projects/goldersgreen/pyserver/server3/lib/empty_modules': '/home/jovyan/modules',
-        # '/Users/zhaofengli/projects/goldersgreen/pyserver/user_directory': '/home/jovyan/dataset'
-        # '/Users/Chun/Documents/workspace/goldersgreen/pyserver/user_directory/{user_ID}/{project_name}': '/home/jovyan/work',
-        # '/Users/Chun/Documents/workspace/goldersgreen/pyserver/server3/lib/modules': '/home/jovyan/modules',
-        # '/Users/Chun/Documents/workspace/goldersgreen/pyserver/user_directory': '/home/jovyan/dataset'
-        # '/home/git/www/mo_prod/pyserver/user_directory/{user_ID}/{project_name}': '/home/jovyan/work',
-        # '/home/git/www/mo_prod/pyserver/server3/lib/modules': '/home/jovyan/modules',
-        # '/home/git/www/mo_prod/pyserver/user_directory': '/home/jovyan/dataset'
+volume_name = 'notebook-volume-{user_ID}-{project_name}'
+c.KubeSpawner.start_timeout = 60 * 5
+c.KubeSpawner.http_timeout = 60 * 5
+# c.JupyterHub.slow_spawn_timeout = 60 * 5
+c.KubeSpawner.uid = 1000
+c.KubeSpawner.gid = 100
+c.KubeSpawner.fs_gid = 100
+CLAIM_NAME = 'nfs-pvc-user-dir'
+if ENV == 'DEV':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
     }
+    CLAIM_NAME = 'nfs-pvc-user-dir-dev'
+elif ENV == 'PROD':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://192.168.31.11:8899/pyapi'
+    }
+elif ENV == 'MO':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
+    }
+c.KubeSpawner.extra_container_config = {
+    'ports': [
+        {
+            'containerPort': 8888,
+            'name': 'notebook-port'
+        },
+        {
+            'containerPort': 6006,
+            'name': 'tb-port'
+        },
+        {
+            'containerPort': 3000,
+            'name': 'pyls-port'
+        },
+    ],
+    'resources': {
+        'limits': {
+            'cpu': '1',
+            'memory': '2Gi'
+        },
+        'requests': {
+            'cpu': '0.001',
+            'memory': '1Mi'
+        }
+    }
+}
+# c.DockerSpawner.remove_containers = True
+# c.DockerSpawner.container_ip = '0.0.0.0'
+# c.DockerSpawner.host_ip = '0.0.0.0'
+c.KubeSpawner.volume_mounts = [
+    {
+        "mountPath": "/home/jovyan/work/",
+        "name": volume_name,
+        "subPath": '{user_ID}/{project_name}'
+    },
+]
+c.KubeSpawner.volumes = [
+    {
+        "name": volume_name,
+        "persistentVolumeClaim": {
+            "claimName": CLAIM_NAME
+        }
+    },
+]
+# NOTE:  sudo route -n add -net 172.16.0.0/16 192.168.31.11

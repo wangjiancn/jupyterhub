@@ -59,10 +59,10 @@ SHELL ["/bin/bash", "-c"]
 RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
-#    mkvirtualenv jlenv && \
-#    workon jlenv && \
-#    pip --default-timeout=100 install jupyterlab==0.31.1 'python-language-server[all]' && \
-#    toggleglobalsitepackages && \
+    mkvirtualenv jlenv && \
+    workon jlenv && \
+    pip --default-timeout=100 install jupyterlab==0.31.1 'python-language-server[all]' && \
+    toggleglobalsitepackages && \
     #make basenv
     mkvirtualenv basenv && \
     workon basenv && \
@@ -72,30 +72,12 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
 
 USER root
 
-ADD run.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/run.sh
-
-ADD add_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/add_venv.sh
-
-ADD install_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/install_venv.sh
-
-ADD remove_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/remove_venv.sh
-
-ADD freeze_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/freeze_venv.sh
-
-ADD modules /home/jovyan/modules
-RUN chown -R jovyan:users /home/jovyan/modules
-
-ADD dataset /home/jovyan/dataset
-RUN chown -R jovyan:users /home/jovyan/dataset
+ADD build.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/build.sh
 
 USER $NB_UID
 
 EXPOSE 8888
 WORKDIR /home/$NB_USER/work
 
-CMD ['bash', '/home/jovyan/run.sh']
+CMD ['bash', '/home/jovyan/build.sh']
