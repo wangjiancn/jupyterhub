@@ -1448,6 +1448,7 @@ else:
 # }
 
 c.KubeSpawner.service_account = 'default'
+# c.KubeSpawner.namespace = 'jupyter'
 
 volume_name = 'notebook-volume-{user_ID}-{project_name}'
 c.KubeSpawner.start_timeout = 60 * 5
@@ -1489,6 +1490,10 @@ c.KubeSpawner.extra_container_config = {
         'limits': {
             'cpu': '1',
             'memory': '2Gi'
+        },
+        'requests': {
+            'cpu': '0.001',
+            'memory': '1Mi'
         }
     }
 }
