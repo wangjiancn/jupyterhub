@@ -1450,7 +1450,7 @@ else:
 c.KubeSpawner.service_account = 'default'
 # c.KubeSpawner.namespace = 'jupyter'
 
-volume_name = 'notebook-volume-{user_ID}-{project_name}'
+volume_name = 'notebook-volume-{username}'
 c.KubeSpawner.start_timeout = 60 * 5
 c.KubeSpawner.http_timeout = 60 * 5
 # c.JupyterHub.slow_spawn_timeout = 60 * 5
