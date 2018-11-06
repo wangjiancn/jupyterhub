@@ -66,6 +66,8 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     workon basenv && \
     pip --default-timeout=100 install -U opencv-python nltk notebook seaborn keras && \
     pip --default-timeout=100 install jupyterhub==0.8.1 && \
+    pip install http://download.pytorch.org/whl/cu92/torch-0.4.1-cp35-cp35m-linux_x86_64.whl && \
+    pip install torchvision && \
     toggleglobalsitepackages
 
 USER root
