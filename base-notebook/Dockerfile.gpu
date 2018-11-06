@@ -11,10 +11,8 @@ RUN apt-get update && apt-get install -yq apt-utils apt-transport-https
 ADD cuda.list /etc/apt/sources.list.d/cuda.list
 ADD nvidia-ml.list /etc/apt/sources.list.d/nvidia-ml.list
 
-RUN apt-get update
-
 # To change the datetime from UTC to Asia/Shanghai
-RUN apt-get install -yq graphviz tzdata nano vim wget git python3-tk pandoc
+RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk pandoc
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get install -y nodejs
 # After install node, python2 will be installed
