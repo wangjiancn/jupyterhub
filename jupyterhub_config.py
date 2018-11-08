@@ -66,7 +66,7 @@ class MyKubeSpawner(KubeSpawner):
     pyls_proxy_spec = None
 
     def _expand_user_properties(self, template):
-        print('check:', self.user.name, type(self.user.name))
+        # print('check:', self.user.name, type(self.user.name))
 
         # Make sure username and servername match the restrictions for DNS labels
         # Note: '-' is not in safe_chars, as it is being used as escape character
@@ -1471,7 +1471,7 @@ else:
 c.KubeSpawner.service_account = 'default'
 # c.KubeSpawner.namespace = 'jupyter'
 
-volume_name = 'notebook-volume-{username}'
+volume_name = 'notebook-volume-{userid}'
 c.KubeSpawner.start_timeout = 60 * 5
 c.KubeSpawner.http_timeout = 60 * 5
 # c.JupyterHub.slow_spawn_timeout = 60 * 5
