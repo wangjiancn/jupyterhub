@@ -1,4 +1,4 @@
-FROM magicalion/singleuser:latest-gpu
+FROM magicalion/singleuser:build-gpu
 
 USER $NB_UID
 
