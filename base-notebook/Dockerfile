@@ -41,7 +41,7 @@ RUN chown -R jovyan:users /home/jovyan/.pip
 ADD pyls /home/jovyan/pyls
 RUN chown -R jovyan:users /home/jovyan/pyls
 
-RUN pip install virtualenvwrapper virtualenv-clone
+RUN pip install virtualenvwrapper virtualenv-clone tensorboard==1.11.0
 
 USER $NB_UID
 
