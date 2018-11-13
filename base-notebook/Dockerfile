@@ -5,7 +5,7 @@ LABEL maintainer="Mo Model Team"
 USER root
 
 # To change the datetime from UTC to Asia/Shanghai
-RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk pandoc texlive-xetex
+RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get update && apt-get install -y nodejs
 # After install node, python2 will be installed
