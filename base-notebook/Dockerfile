@@ -4,10 +4,9 @@ LABEL maintainer="Mo Model Team"
 
 USER root
 
-# To change the datetime from UTC to Asia/Shanghai
-RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk pandoc texlive-xetex
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt-get install -y nodejs
+# To change the datetime from UTC to Asia/Shanghai
+RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex
 # After install node, python2 will be installed
 # move back python3 to be default python
 #RUN ln -snf /usr/bin/python3 /usr/bin/python
@@ -42,7 +41,7 @@ RUN chown -R jovyan:users /home/jovyan/.pip
 ADD pyls /home/jovyan/pyls
 RUN chown -R jovyan:users /home/jovyan/pyls
 
-RUN pip install virtualenvwrapper virtualenv-clone
+RUN pip install virtualenvwrapper virtualenv-clone tensorboard==1.11.0
 
 USER $NB_UID
 

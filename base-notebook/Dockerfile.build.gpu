@@ -1,8 +1,15 @@
-FROM tensorflow/tensorflow:latest-py3
+FROM tensorflow/tensorflow:latest-gpu-py3
 
 LABEL maintainer="Mo Model Team"
 
 USER root
+
+# fix nvidia repo connection inside GFW
+RUN rm -f /etc/apt/sources.list.d/cuda.list
+RUN rm -f /etc/apt/sources.list.d/nvidia-ml.list
+RUN apt-get update && apt-get install -yq apt-utils apt-transport-https
+ADD cuda.list /etc/apt/sources.list.d/cuda.list
+ADD nvidia-ml.list /etc/apt/sources.list.d/nvidia-ml.list
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 # To change the datetime from UTC to Asia/Shanghai

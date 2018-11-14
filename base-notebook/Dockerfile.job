@@ -1,4 +1,4 @@
-FROM magicalion/singleuser:latest
+FROM magicalion/singleuser:build
 
 USER $NB_UID
 
