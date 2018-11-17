@@ -4,3 +4,4 @@ imageio
 Shapely
 pydot
 xlrd
+jieba
