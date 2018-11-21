@@ -877,6 +877,7 @@ from jupyter_client.localinterfaces import public_ips
 # c.JupyterHub.hub_ip = '127.0.0.1'
 # c.JupyterHub.hub_ip = '0.0.0.0'
 c.JupyterHub.hub_ip = public_ips()[0]
+# c.JupyterHub.hub_ip = '192.168.32.3'  # upstairs ip
 
 ## The port for the Hub process
 # c.JupyterHub.hub_port = 8081
@@ -1480,6 +1481,7 @@ CLAIM_NAME = 'nfs-pvc-user-dir'
 if ENV == 'DEV':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
+        # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
     }
     CLAIM_NAME = 'nfs-pvc-user-dir-dev'
 elif ENV == 'PROD':
