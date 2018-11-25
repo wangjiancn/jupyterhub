@@ -1450,9 +1450,9 @@ c.Authenticator.admin_users = {'admin'}
 # user_path = os.path.abspath(cwd). \
 #     replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
 
-ENV = 'DEV'
+# ENV = 'DEV'
 # ENV = 'PROD'
-# ENV = 'MO'
+ENV = 'MO'
 # ENV = 'LOCAL'
 
 # dev
