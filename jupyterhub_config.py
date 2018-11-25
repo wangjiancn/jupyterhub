@@ -10,6 +10,27 @@ SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
+import base64
+from Crypto.Cipher import AES
+
+
+AKEY = '27cfbc4d262403839797636105d0a476'  # AES key must be either 16, 24, or 32 bytes long
+
+# iv = Random.new().read(AES.block_size)
+iv = 'This is an IV456'
+
+
+def encode(message):
+    obj = AES.new(AKEY.encode("utf8"), AES.MODE_CFB, iv.encode("utf8"))
+    message = bytes(message, encoding="utf8")
+    return base64.urlsafe_b64encode(obj.encrypt(message)).decode("utf-8")
+
+
+def decode(cipher):
+    obj2 = AES.new(AKEY, AES.MODE_CFB, iv)
+    if not isinstance(cipher, str):
+        cipher = cipher.encode("uft-8")
+    return obj2.decrypt(base64.urlsafe_b64decode(cipher))
 
 class SuperSecureAuthenticator(Authenticator):
     @gen.coroutine
@@ -876,9 +897,9 @@ from jupyter_client.localinterfaces import public_ips
 #  differ.
 # c.JupyterHub.hub_ip = '127.0.0.1'
 # c.JupyterHub.hub_ip = '0.0.0.0'
-c.JupyterHub.hub_ip = public_ips()[0]
-# c.JupyterHub.hub_ip = '192.168.32.3'  # upstairs ip
-
+# c.JupyterHub.hub_ip = public_ips()[0]
+c.JupyterHub.hub_ip = '192.168.32.3'  # upstairs ip
+#
 ## The port for the Hub process
 # c.JupyterHub.hub_port = 8081
 
@@ -1480,8 +1501,8 @@ c.KubeSpawner.fs_gid = 100
 CLAIM_NAME = 'nfs-pvc-user-dir'
 if ENV == 'DEV':
     c.KubeSpawner.environment = {
-        'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
-        # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
+        # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
+        'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
     }
     CLAIM_NAME = 'nfs-pvc-user-dir-dev'
 elif ENV == 'PROD':
