@@ -28,7 +28,7 @@ echo "import sys; new=sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p=getatt
 #add2virtualenv ${WORK}/.localenv/lib/python3.5/site-packages
 
 if [ ! -f ${WORK}/${SCRIPT} ] ; then
-    echo 'script path not exists'
+    echo script path ${WORK}/${SCRIPT} not exists
     exit 1
 fi
 

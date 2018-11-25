@@ -4,12 +4,9 @@ LABEL maintainer="Mo Model Team"
 
 USER root
 
-RUN apt-get update
-
-# To change the datetime from UTC to Asia/Shanghai
-RUN apt-get install -yq graphviz tzdata nano vim wget git python3-tk
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt-get install -y nodejs
+# To change the datetime from UTC to Asia/Shanghai
+RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex
 # After install node, python2 will be installed
 # move back python3 to be default python
 #RUN ln -snf /usr/bin/python3 /usr/bin/python
@@ -44,7 +41,7 @@ RUN chown -R jovyan:users /home/jovyan/.pip
 ADD pyls /home/jovyan/pyls
 RUN chown -R jovyan:users /home/jovyan/pyls
 
-RUN pip install virtualenvwrapper virtualenv-clone
+RUN pip install virtualenvwrapper virtualenv-clone tensorboard==1.11.0
 
 USER $NB_UID
 
@@ -67,10 +64,34 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv basenv && \
     workon basenv && \
     pip --default-timeout=100 install -U opencv-python nltk notebook seaborn keras && \
+    pip --default-timeout=100 install -r requirements.txt && \
     pip --default-timeout=100 install jupyterhub==0.8.1 && \
+    pip install http://download.pytorch.org/whl/cu92/torch-0.4.1-cp35-cp35m-linux_x86_64.whl && \
+    pip install torchvision && \
     toggleglobalsitepackages
 
 USER root
+
+ADD run.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/run.sh
+
+ADD add_venv.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/add_venv.sh
+
+ADD install_venv.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/install_venv.sh
+
+ADD remove_venv.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/remove_venv.sh
+
+ADD freeze_venv.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/freeze_venv.sh
+
+ADD modules /home/jovyan/modules
+RUN chown -R jovyan:users /home/jovyan/modules
+
+ADD dataset /home/jovyan/dataset
+RUN chown -R jovyan:users /home/jovyan/dataset
 
 ADD build.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/build.sh

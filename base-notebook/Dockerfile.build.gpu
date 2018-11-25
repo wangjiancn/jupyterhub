@@ -1,8 +1,15 @@
-FROM tensorflow/tensorflow:latest-py3
+FROM tensorflow/tensorflow:latest-gpu-py3
 
 LABEL maintainer="Mo Model Team"
 
 USER root
+
+# fix nvidia repo connection inside GFW
+RUN rm -f /etc/apt/sources.list.d/cuda.list
+RUN rm -f /etc/apt/sources.list.d/nvidia-ml.list
+RUN apt-get update && apt-get install -yq apt-utils apt-transport-https
+ADD cuda.list /etc/apt/sources.list.d/cuda.list
+ADD nvidia-ml.list /etc/apt/sources.list.d/nvidia-ml.list
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 # To change the datetime from UTC to Asia/Shanghai
@@ -55,13 +62,11 @@ SHELL ["/bin/bash", "-c"]
 
 RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
-ADD run.sh /home/jovyan
-
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
-#    mkvirtualenv jlenv && \
-#    workon jlenv && \
-#    pip --default-timeout=100 install jupyterlab==0.31.1 'python-language-server[all]' && \
-#    toggleglobalsitepackages && \
+    mkvirtualenv jlenv && \
+    workon jlenv && \
+    pip --default-timeout=100 install jupyterlab==0.31.1 'python-language-server[all]' && \
+    toggleglobalsitepackages && \
     #make basenv
     mkvirtualenv basenv && \
     workon basenv && \
@@ -95,9 +100,12 @@ RUN chown -R jovyan:users /home/jovyan/modules
 ADD dataset /home/jovyan/dataset
 RUN chown -R jovyan:users /home/jovyan/dataset
 
+ADD build.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/build.sh
+
 USER $NB_UID
 
 EXPOSE 8888
 WORKDIR /home/$NB_USER/work
 
-CMD ['bash', '/home/jovyan/run.sh']
+CMD ['bash', '/home/jovyan/build.sh']

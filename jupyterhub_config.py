@@ -3,6 +3,8 @@
 import jwt
 from tornado import gen
 from jupyterhub.auth import Authenticator
+import hashlib
+from server3.utility.str_utility import encode, decode
 
 SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
@@ -13,14 +15,29 @@ class SuperSecureAuthenticator(Authenticator):
     @gen.coroutine
     def authenticate(self, handler, data):
         tmp_username = data['username']
+        unhash_name = decode(tmp_username).decode('utf-8').split('+')[0]
         # decode token:
         token_data = jwt.decode(data['password'], SECRET, algorithms=[
             ALGORITHM])
-        print(tmp_username, token_data[IDENTITY])
-        if token_data[IDENTITY] == tmp_username.split('+')[0]:
+        print(tmp_username, unhash_name, token_data[IDENTITY])
+        if token_data[IDENTITY] == unhash_name:
             # if token_data[IDENTITY] == 'zhaofengli':
+            # print('user tmp_username:', tmp_username)
+            # hash_name = encode(tmp_username)
+            # return tmp_username
             return tmp_username
 
+    def normalize_username(self, username):
+        """Normalize the given username and return it
+
+        Override in subclasses if usernames need different normalization rules.
+
+        The default attempts to lowercase the username and apply `username_map` if it is
+        set.
+        """
+        # username = username.lower()
+        username = self.username_map.get(username, username)
+        return username
 
 import sys
 import string
@@ -52,7 +69,6 @@ class MyKubeSpawner(KubeSpawner):
         # Make sure username and servername match the restrictions for DNS labels
         # Note: '-' is not in safe_chars, as it is being used as escape character
         safe_chars = set(string.ascii_lowercase + string.digits)
-
         # Set servername based on whether named-server initialised
         if self.name:
             servername = '-{}'.format(self.name)
@@ -67,6 +83,9 @@ class MyKubeSpawner(KubeSpawner):
         safe_username = escapism.escape(self.user.name, safe=safe_chars,
                                         escape_char='-').lower()
         split_username = self.user.name.split('+')
+        # print('split_username:', split_username, self.user.name, self.name)
+        if len(split_username) <= 1 and self.user.name != 'admin':
+            split_username = decode(self.user.name).decode('utf-8').split('+')
         user_ID = split_username[0]
         if len(split_username) > 1:
             project_name = split_username[1]
@@ -858,6 +877,7 @@ from jupyter_client.localinterfaces import public_ips
 # c.JupyterHub.hub_ip = '127.0.0.1'
 # c.JupyterHub.hub_ip = '0.0.0.0'
 c.JupyterHub.hub_ip = public_ips()[0]
+# c.JupyterHub.hub_ip = '192.168.32.3'  # upstairs ip
 
 ## The port for the Hub process
 # c.JupyterHub.hub_port = 8081
@@ -1450,7 +1470,7 @@ else:
 c.KubeSpawner.service_account = 'default'
 # c.KubeSpawner.namespace = 'jupyter'
 
-volume_name = 'notebook-volume-{user_ID}-{project_name}'
+volume_name = 'notebook-volume-{userid}'
 c.KubeSpawner.start_timeout = 60 * 5
 c.KubeSpawner.http_timeout = 60 * 5
 # c.JupyterHub.slow_spawn_timeout = 60 * 5
@@ -1461,6 +1481,7 @@ CLAIM_NAME = 'nfs-pvc-user-dir'
 if ENV == 'DEV':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
+        # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
     }
     CLAIM_NAME = 'nfs-pvc-user-dir-dev'
 elif ENV == 'PROD':

@@ -1,0 +1,7 @@
+imgaug
+scikit-image
+imageio
+Shapely
+pydot
+xlrd
+jieba
