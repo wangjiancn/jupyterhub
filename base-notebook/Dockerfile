@@ -55,7 +55,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
-ADD run.sh /home/jovyan
+ADD requirements.txt .
 
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
 #    mkvirtualenv jlenv && \
