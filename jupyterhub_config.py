@@ -4,7 +4,6 @@ import jwt
 from tornado import gen
 from jupyterhub.auth import Authenticator
 import hashlib
-from server3.utility.str_utility import encode, decode
 
 SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
@@ -1473,8 +1472,8 @@ c.Authenticator.admin_users = {'admin'}
 # user_path = os.path.abspath(cwd). \
 #     replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
 
-ENV = 'DEV'
-# ENV = 'PROD'
+# ENV = 'DEV'
+ENV = 'PROD'
 # ENV = 'MO'
 # ENV = 'LOCAL'
 
@@ -1504,8 +1503,7 @@ CLAIM_NAME = 'nfs-pvc-user-dir'
 if ENV == 'DEV':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
-        # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')
-    # upstairs ip
+        # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
     }
     CLAIM_NAME = 'nfs-pvc-user-dir-dev'
 elif ENV == 'PROD':
