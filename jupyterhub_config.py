@@ -4,7 +4,6 @@ import jwt
 from tornado import gen
 from jupyterhub.auth import Authenticator
 import hashlib
-from server3.utility.str_utility import encode, decode
 
 SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
@@ -897,8 +896,8 @@ from jupyter_client.localinterfaces import public_ips
 #  differ.
 # c.JupyterHub.hub_ip = '127.0.0.1'
 # c.JupyterHub.hub_ip = '0.0.0.0'
-# c.JupyterHub.hub_ip = public_ips()[0]
-c.JupyterHub.hub_ip = '192.168.32.3'  # upstairs ip
+c.JupyterHub.hub_ip = public_ips()[0]
+# c.JupyterHub.hub_ip = '192.168.32.3'  # upstairs ip
 #
 ## The port for the Hub process
 # c.JupyterHub.hub_port = 8081
@@ -1501,8 +1500,8 @@ c.KubeSpawner.fs_gid = 100
 CLAIM_NAME = 'nfs-pvc-user-dir'
 if ENV == 'DEV':
     c.KubeSpawner.environment = {
-        # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
-        'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
+        'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
+        # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
     }
     CLAIM_NAME = 'nfs-pvc-user-dir-dev'
 elif ENV == 'PROD':
