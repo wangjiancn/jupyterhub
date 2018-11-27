@@ -1,4 +1,3 @@
-Cython
 imgaug
 scikit-image
 imageio
