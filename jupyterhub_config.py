@@ -1507,6 +1507,9 @@ c.KubeSpawner.extra_container_config = {
             'name': 'pyls-port'
         },
     ],
+    # "securityContext": {
+    #     "privileged": True,
+    # },
     'resources': {
         'limits': {
             'cpu': '1',
@@ -1525,7 +1528,8 @@ c.KubeSpawner.volume_mounts = [
     {
         "mountPath": "/home/jovyan/work/",
         "name": volume_name,
-        "subPath": '{user_ID}/{project_name}'
+        "subPath": '{user_ID}/{project_name}',
+        "mount_propagation": 'HostToContainer',
     },
 ]
 c.KubeSpawner.volumes = [
