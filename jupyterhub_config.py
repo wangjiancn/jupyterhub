@@ -1472,8 +1472,8 @@ c.Authenticator.admin_users = {'admin'}
 # user_path = os.path.abspath(cwd). \
 #     replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
 
-# ENV = 'DEV'
-ENV = 'PROD'
+ENV = 'DEV'
+# ENV = 'PROD'
 # ENV = 'MO'
 # ENV = 'LOCAL'
 
@@ -1506,14 +1506,17 @@ if ENV == 'DEV':
         # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
     }
     CLAIM_NAME = 'nfs-pvc-user-dir-dev'
+    USER_DIRECTORY = 'user_directory_dev'
 elif ENV == 'PROD':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://192.168.31.11:8899/pyapi'
     }
+    USER_DIRECTORY = 'user_directory'
 elif ENV == 'MO':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
     }
+    USER_DIRECTORY = 'user_directory'
 c.KubeSpawner.extra_container_config = {
     'ports': [
         {
@@ -1550,16 +1553,22 @@ c.KubeSpawner.volume_mounts = [
     {
         "mountPath": "/home/jovyan/work/",
         "name": volume_name,
-        "subPath": '{user_ID}/{project_name}',
+        # "subPath": '{user_ID}/{project_name}',
         "mount_propagation": 'HostToContainer',
     },
 ]
 c.KubeSpawner.volumes = [
     {
         "name": volume_name,
-        "persistentVolumeClaim": {
-            "claimName": CLAIM_NAME
+        # "persistentVolumeClaim": {
+        #     "claimName": CLAIM_NAME
+        # }cd
+        'hostPath': {
+            # directory location on host
+            'path': '/mnt/'+USER_DIRECTORY+'/{user_ID}/{project_name}',
+            # this field is optional
+            'type': 'Directory',
         }
-    },
+    }
 ]
 # NOTE:  sudo route -n add -net 172.16.0.0/16 192.168.31.11
