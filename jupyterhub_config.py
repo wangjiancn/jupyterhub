@@ -86,6 +86,16 @@ class MyKubeSpawner(KubeSpawner):
     pyls_host = None
     pyls_proxy_spec = None
 
+    # @property
+    # def uid(self):
+    #     return self.user.id
+
+    @property
+    def cmd(self):
+        # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
+        return ['bash', '/home/jovyan/run.sh']
+
+
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels
         # Note: '-' is not in safe_chars, as it is being used as escape character
@@ -1076,7 +1086,8 @@ c.JupyterHub.trust_user_provided_tokens = True
 #  Some spawners allow shell-style expansion here, allowing you to use
 #  environment variables here. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
-# c.Spawner.args = []
+
+c.Spawner.args = []
 
 ## The command used for starting the single-user server.
 #
@@ -1090,7 +1101,7 @@ c.JupyterHub.trust_user_provided_tokens = True
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 # c.Spawner.cmd = ['jupyter', 'labhub']
-c.Spawner.cmd = ['bash', '/home/jovyan/run.sh']
+# c.Spawner.cmd = ['bash', '/home/jovyan/run.sh']
 
 ## Minimum number of cpu-cores a single-user notebook server is guaranteed to
 #  have available.
@@ -1571,4 +1582,5 @@ c.KubeSpawner.volumes = [
         }
     }
 ]
+
 # NOTE:  sudo route -n add -net 172.16.0.0/16 192.168.31.11

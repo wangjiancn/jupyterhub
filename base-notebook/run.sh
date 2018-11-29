@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#uid=${1}
+#
+#sh -c  chown -R ${uid}:${uid} /home/jovyan/work
 export WORK=/home/jovyan/work
 
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
