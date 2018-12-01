@@ -80,9 +80,14 @@ def get_module_info(module_identity):
 def module_general(module_id, action, *args, **kwargs):
     [user_ID, module_name, version] = module_id.split('/')
     version = '_'.join(version.split('.'))
-    main_module = import_module(
-        'modules.{user_ID}.{module_name}.{version}.src.main'.format(
-            user_ID=user_ID, module_name=module_name, version=version))
+    try:
+        main_module = import_module(
+            'modules.{user_ID}.{module_name}.{version}.main'.format(
+                user_ID=user_ID, module_name=module_name, version=version))
+    except ModuleNotFoundError:
+        main_module = import_module(
+            'modules.{user_ID}.{module_name}.{version}.src.main'.format(
+                user_ID=user_ID, module_name=module_name, version=version))
     cls = getattr(main_module, module_name)()
     return getattr(cls, action)(*args, **kwargs)
 
@@ -91,9 +96,14 @@ def get_module(module_id):
     # [user_ID, module_name, version] = module_id.split('/')
     # version = '_'.join(version.split('.'))
     user_ID, module_name, version = get_module_info(module_id)
-    main_module = import_module(
-        'modules.{user_ID}.{module_name}.{version}.src.main'.format(
-            user_ID=user_ID, module_name=module_name, version=version))
+    try:
+        main_module = import_module(
+            'modules.{user_ID}.{module_name}.{version}.main'.format(
+                user_ID=user_ID, module_name=module_name, version=version))
+    except ModuleNotFoundError:
+        main_module = import_module(
+            'modules.{user_ID}.{module_name}.{version}.src.main'.format(
+                user_ID=user_ID, module_name=module_name, version=version))
     cls = getattr(main_module, module_name)
     return cls
 
