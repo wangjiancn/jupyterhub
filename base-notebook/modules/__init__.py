@@ -84,7 +84,7 @@ def module_general(module_id, action, *args, **kwargs):
         main_module = import_module(
             'modules.{user_ID}.{module_name}.{version}.main'.format(
                 user_ID=user_ID, module_name=module_name, version=version))
-    except ModuleNotFoundError:
+    except ImportError:
         main_module = import_module(
             'modules.{user_ID}.{module_name}.{version}.src.main'.format(
                 user_ID=user_ID, module_name=module_name, version=version))
@@ -100,7 +100,7 @@ def get_module(module_id):
         main_module = import_module(
             'modules.{user_ID}.{module_name}.{version}.main'.format(
                 user_ID=user_ID, module_name=module_name, version=version))
-    except ModuleNotFoundError:
+    except ImportError:
         main_module = import_module(
             'modules.{user_ID}.{module_name}.{version}.src.main'.format(
                 user_ID=user_ID, module_name=module_name, version=version))
