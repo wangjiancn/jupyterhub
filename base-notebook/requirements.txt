@@ -5,3 +5,4 @@ Shapely
 pydot
 xlrd
 jieba
+word2vec
