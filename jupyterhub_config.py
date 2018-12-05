@@ -144,6 +144,16 @@ class MyKubeSpawner(KubeSpawner):
         return requests.put(f'{SERVER}/apps/insert_envs/{project_name}')
 
     @staticmethod
+    def insert_dataset(project_name):
+        """
+        mount dataset
+        :param tb_port:
+        :param project_name:
+        :return: dict of res json
+        """
+        return requests.put(f'{SERVER}/project/mount_all_dataet/{project_name}')
+
+    @staticmethod
     def install_reset_req(project_name):
         """
         add env to jupyterlab
@@ -289,6 +299,8 @@ class MyKubeSpawner(KubeSpawner):
 
         self.insert_envs(self.user.name)
         self.install_reset_req(self.user.name)
+
+        self.insert_dataset(self.user.name)
         return (pod.status.pod_ip, self.port)
 
 
