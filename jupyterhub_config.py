@@ -12,7 +12,6 @@ IDENTITY = 'identity'
 import base64
 from Crypto.Cipher import AES
 
-
 AKEY = '27cfbc4d262403839797636105d0a476'  # AES key must be either 16, 24, or 32 bytes long
 
 # iv = Random.new().read(AES.block_size)
@@ -30,6 +29,7 @@ def decode(cipher):
     if not isinstance(cipher, str):
         cipher = cipher.encode("uft-8")
     return obj2.decrypt(base64.urlsafe_b64decode(cipher))
+
 
 class SuperSecureAuthenticator(Authenticator):
     @gen.coroutine
@@ -59,6 +59,7 @@ class SuperSecureAuthenticator(Authenticator):
         username = self.username_map.get(username, username)
         return username
 
+
 import sys
 import string
 
@@ -84,6 +85,16 @@ class MyKubeSpawner(KubeSpawner):
     pyls_port = 3000
     pyls_host = None
     pyls_proxy_spec = None
+
+    # @property
+    # def uid(self):
+    #     return self.user.id
+
+    @property
+    def cmd(self):
+        # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
+        return ['bash', '/home/jovyan/run.sh']
+
 
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels
@@ -131,6 +142,16 @@ class MyKubeSpawner(KubeSpawner):
         :return: dict of res json
         """
         return requests.put(f'{SERVER}/apps/insert_envs/{project_name}')
+
+    @staticmethod
+    def insert_dataset(project_name):
+        """
+        mount dataset
+        :param tb_port:
+        :param project_name:
+        :return: dict of res json
+        """
+        return requests.put(f'{SERVER}/project/mount_all_dataet/{project_name}')
 
     @staticmethod
     def install_reset_req(project_name):
@@ -278,6 +299,8 @@ class MyKubeSpawner(KubeSpawner):
 
         self.insert_envs(self.user.name)
         self.install_reset_req(self.user.name)
+
+        self.insert_dataset(self.user.name)
         return (pod.status.pod_ip, self.port)
 
 
@@ -590,7 +613,8 @@ class MyProxy(ConfigurableHTTPProxy):
         spawner.pyls_host = spawner.server.host.replace(
             str(spawner.user.server.port),
             str(spawner.pyls_port))
-        spawner.pyls_proxy_spec = spawner.proxy_spec.replace('/user/', '/pyls/')
+        spawner.pyls_proxy_spec = spawner.proxy_spec.replace('/user/',
+                                                             '/pyls/')
         self.log.info("Adding user %s's tensorboard to proxy %s => %s",
                       user.name, spawner.pyls_proxy_spec, spawner.pyls_host,
                       )
@@ -1074,7 +1098,8 @@ c.JupyterHub.trust_user_provided_tokens = True
 #  Some spawners allow shell-style expansion here, allowing you to use
 #  environment variables here. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
-# c.Spawner.args = []
+
+c.Spawner.args = []
 
 ## The command used for starting the single-user server.
 #
@@ -1088,7 +1113,7 @@ c.JupyterHub.trust_user_provided_tokens = True
 #  environment variables. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 # c.Spawner.cmd = ['jupyter', 'labhub']
-c.Spawner.cmd = ['bash', '/home/jovyan/run.sh']
+# c.Spawner.cmd = ['bash', '/home/jovyan/run.sh']
 
 ## Minimum number of cpu-cores a single-user notebook server is guaranteed to
 #  have available.
@@ -1504,14 +1529,17 @@ if ENV == 'DEV':
         # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
     }
     CLAIM_NAME = 'nfs-pvc-user-dir-dev'
+    USER_DIRECTORY = 'user_directory_dev'
 elif ENV == 'PROD':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://192.168.31.11:8899/pyapi'
     }
+    USER_DIRECTORY = 'user_directory'
 elif ENV == 'MO':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
     }
+    USER_DIRECTORY = 'user_directory'
 c.KubeSpawner.extra_container_config = {
     'ports': [
         {
@@ -1527,6 +1555,9 @@ c.KubeSpawner.extra_container_config = {
             'name': 'pyls-port'
         },
     ],
+    # "securityContext": {
+    #     "privileged": True,
+    # },
     'resources': {
         'limits': {
             'cpu': '1',
@@ -1545,15 +1576,23 @@ c.KubeSpawner.volume_mounts = [
     {
         "mountPath": "/home/jovyan/work/",
         "name": volume_name,
-        "subPath": '{user_ID}/{project_name}'
+        # "subPath": '{user_ID}/{project_name}',
+        "mount_propagation": 'HostToContainer',
     },
 ]
 c.KubeSpawner.volumes = [
     {
         "name": volume_name,
-        "persistentVolumeClaim": {
-            "claimName": CLAIM_NAME
+        # "persistentVolumeClaim": {
+        #     "claimName": CLAIM_NAME
+        # }cd
+        'hostPath': {
+            # directory location on host
+            'path': '/mnt/'+USER_DIRECTORY+'/{user_ID}/{project_name}',
+            # this field is optional
+            'type': 'Directory',
         }
-    },
+    }
 ]
+
 # NOTE:  sudo route -n add -net 172.16.0.0/16 192.168.31.11
