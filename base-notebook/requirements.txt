@@ -6,3 +6,4 @@ pydot
 xlrd
 jieba
 word2vec
+tqdm
