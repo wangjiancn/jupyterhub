@@ -22,6 +22,7 @@ ENV USR_DIR=/usr \
     NB_GID=100
 ENV PATH=$LOCAL_DIR/bin:$PATH \
     HOME=/home/$NB_USER
+ENV LANG=C.UTF-8
 
 ADD fix-permissions /usr/local/bin/fix-permissions
 # Create jovyan user with UID=1000 and in the 'users' group
