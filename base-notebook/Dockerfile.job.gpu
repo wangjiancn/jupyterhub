@@ -7,6 +7,8 @@ WORKDIR /home/$NB_USER/work
 
 USER root
 
+ADD sc.py /usr/lib/python3.5/sitecustomize.py
+
 ADD run_job.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run_job.sh
 
