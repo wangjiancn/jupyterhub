@@ -1497,11 +1497,12 @@ c.Authenticator.admin_users = {'admin'}
 
 # ENV = 'DEV'
 # ENV = 'PROD'
-ENV = 'MO'
+# ENV = 'MO'
+ENV = 'ZJU'
 # ENV = 'LOCAL'
 
 # dev
-if ENV == 'MO':
+if ENV in ['MO', 'ZJU']:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
@@ -1538,6 +1539,11 @@ elif ENV == 'PROD':
 elif ENV == 'MO':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+elif ENV == 'ZJU':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://10.214.223.221:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
 c.KubeSpawner.extra_container_config = {
