@@ -15,7 +15,10 @@ IDENTITY = 'identity'
 ENV = 'ZJU'
 # ENV = 'LOCAL'
 
-SERVER = 'http://10.214.223.222:5005'
+if ENV == 'ZJU':
+    SERVER = 'http://10.214.223.222:5005'
+else:
+    SERVER = 'http://localhost:5005'
 
 import base64
 from Crypto.Cipher import AES
