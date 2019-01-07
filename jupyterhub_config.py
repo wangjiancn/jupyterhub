@@ -158,7 +158,7 @@ class MyKubeSpawner(KubeSpawner):
         :param project_name:
         :return: dict of res json
         """
-        return requests.put(f'{SERVER}/project/mount_all_dataet/{project_name}')
+        return requests.put(f'{SERVER}/project/mount_all_dataset/{project_name}')
 
     @staticmethod
     def install_reset_req(project_name):
