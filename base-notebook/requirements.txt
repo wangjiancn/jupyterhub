@@ -7,3 +7,5 @@ xlrd
 jieba
 word2vec
 tqdm
+torch
+torchvision
