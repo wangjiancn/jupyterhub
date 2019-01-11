@@ -10,9 +10,9 @@ ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
 # ENV = 'DEV'
-# ENV = 'PROD'
+ENV = 'PROD'
 # ENV = 'MO'
-ENV = 'ZJU'
+# ENV = 'ZJU'
 # ENV = 'LOCAL'
 
 if ENV == 'ZJU':
