@@ -5,6 +5,7 @@ JOB_ID=${1}
 SCRIPT=${2}
 RUN_FUNC=${3}
 TASK_ID=${4}
+ARGS=${5}
 
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
@@ -40,7 +41,7 @@ echo 'SYSTEM: Preparing env...'
 #fi
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
 echo 'SYSTEM: Running...'
-${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC} ${TASK_ID}
+${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC} ${TASK_ID} ${ARGS}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
