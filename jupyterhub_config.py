@@ -9,6 +9,17 @@ SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
+# ENV = 'DEV'
+ENV = 'PROD'
+# ENV = 'MO'
+# ENV = 'ZJU'
+# ENV = 'LOCAL'
+
+if ENV == 'ZJU':
+    SERVER = 'http://10.214.223.222:5005'
+else:
+    SERVER = 'http://localhost:5005'
+
 import base64
 from Crypto.Cipher import AES
 
@@ -72,7 +83,6 @@ import escapism
 import jupyterhub
 import requests
 
-SERVER = 'http://localhost:5005'
 
 
 class MyKubeSpawner(KubeSpawner):
@@ -1495,13 +1505,9 @@ c.Authenticator.admin_users = {'admin'}
 # user_path = os.path.abspath(cwd). \
 #     replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
 
-ENV = 'DEV'
-# ENV = 'PROD'
-# ENV = 'MO'
-# ENV = 'LOCAL'
 
 # dev
-if ENV == 'MO':
+if ENV in ['MO', 'ZJU']:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
@@ -1538,6 +1544,11 @@ elif ENV == 'PROD':
 elif ENV == 'MO':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+elif ENV == 'ZJU':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://10.214.223.221:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
 c.KubeSpawner.extra_container_config = {
