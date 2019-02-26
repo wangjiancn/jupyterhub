@@ -7,7 +7,8 @@ USER root
 RUN apt-get update && apt-get install -yq curl
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 # To change the datetime from UTC to Asia/Shanghai
-RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex
+RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex \
+&& apt-get clean && rm -rf /var/lib/apt/lists/*
 # After install node, python2 will be installed
 # move back python3 to be default python
 #RUN ln -snf /usr/bin/python3 /usr/bin/python
@@ -76,6 +77,9 @@ USER root
 
 ADD run.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run.sh
+
+ADD run_tb.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/run_tb.sh
 
 ADD add_venv.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/add_venv.sh
