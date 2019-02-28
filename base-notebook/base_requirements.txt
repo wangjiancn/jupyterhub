@@ -1,0 +1,4 @@
+virtualenvwrapper
+virtualenv-clone
+matplotlib
+tensorboard==1.11.0
