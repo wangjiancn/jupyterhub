@@ -45,7 +45,7 @@ ADD pyls /home/jovyan/pyls
 RUN chown -R jovyan:users /home/jovyan/pyls
 
 ADD base_requirements.txt .
-RUN pip install base_requirements.txt
+RUN pip install -r base_requirements.txt
 
 USER $NB_UID
 
