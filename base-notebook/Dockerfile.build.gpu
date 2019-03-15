@@ -71,7 +71,16 @@ ADD requirements.txt .
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv jlenv && \
     workon jlenv && \
-    pip --default-timeout=100 install jupyterlab==0.31.1 'python-language-server[all]' && \
+    pip --default-timeout=100 install 'python-language-server[all]' && \
+    cd /home/jovyan/.virtualenvs/jlenv/lib/python3.5/site-packages && \
+    git clone https://github.com/jupyterlab/jupyterlab.git && \
+    cd jupyterlab && \
+    git checkout v1.0.0a1 && \
+    pip install -e . && \
+    jlpm install && \
+    jlpm run build:core && \
+    jupyter lab build && \
+    cd /notebooks && \
     toggleglobalsitepackages && \
     #make basenv
     mkvirtualenv basenv && \
