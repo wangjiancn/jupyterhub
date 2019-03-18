@@ -9,6 +9,4 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 export WORKON_HOME=${WORK}
 
-workon .localenv
-
-pip install -U jupyterlab==1.0.0a1 -i https://pypi.python.org/simple
+workon .localenv && pip install -U jupyterlab==1.0.0a1 -i https://pypi.python.org/simple
