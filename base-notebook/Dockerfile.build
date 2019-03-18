@@ -64,7 +64,7 @@ ADD requirements.txt .
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv jlenv && \
     workon jlenv && \
-    pip --default-timeout=100 install jupyterlab==0.31.1 'python-language-server[all]' && \
+    pip --default-timeout=100 install jupyterlab==1.0.0a1 'python-language-server[all]' -i https://pypi.python.org/simple && \
     toggleglobalsitepackages && \
     #make basenv
     mkvirtualenv basenv && \
@@ -102,6 +102,9 @@ RUN chown -R jovyan:users /home/jovyan/dataset
 
 ADD build.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/build.sh
+
+ADD update_jl.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/update_jl.sh
 
 USER $NB_UID
 
