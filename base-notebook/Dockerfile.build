@@ -103,6 +103,9 @@ RUN chown -R jovyan:users /home/jovyan/dataset
 ADD build.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/build.sh
 
+ADD update_jl.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/update_jl.sh
+
 USER $NB_UID
 
 EXPOSE 8888
