@@ -45,7 +45,7 @@ ${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC} ${TASK_ID} ${ARGS}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
-if [ ${SUCCESS} == 1 ] ; then
+if [ ${SUCCESS} != 0 ] ; then
     echo 'SYSTEM: Error Exists!'
     exit 1
 fi
