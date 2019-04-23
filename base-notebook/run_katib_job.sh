@@ -45,7 +45,8 @@ echo 'SYSTEM: Preparing env...'
 #    ${ENV_PATH}/bin/pip install  -r ${WORK}/requirements.txt
 #fi
 
-#${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_trial ${JOB_ID} 1 ${WORKER_ID}
 
 echo 'SYSTEM: Running...'
 ${ENV_PATH}/bin/python ${SCRIPT}  ${ARGS}
