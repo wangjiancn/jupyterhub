@@ -5,14 +5,23 @@ JOB_ID=${1}
 WORKER_ID=${2}
 TRIAL_ID=${3}
 SCRIPT=${4}
-ARGS=${5}
+
+ARGS=''
+
+index=1
+for i in "$@"; do
+    if [[ ${index} -gt 4 ]]
+    then
+        ARGS=${ARGS}' '${i}
+    fi
+    index=$((${index}+1))
+done
 
 echo ${JOB_ID}
 echo ${WORKER_ID}
 echo ${TRIAL_ID}
 echo ${SCRIPT}
 echo ${ARGS}
-
 
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
