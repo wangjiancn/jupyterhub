@@ -7,10 +7,11 @@ TRIAL_ID=${3}
 SCRIPT=${4}
 ARGS=${5}
 
-echo JOB_ID
-echo WORKER_ID
-echo SCRIPT
-echo ARGS
+echo ${JOB_ID}
+echo ${WORKER_ID}
+echo ${TRIAL_ID}
+echo ${SCRIPT}
+echo ${ARGS}
 
 
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
@@ -47,7 +48,7 @@ echo 'SYSTEM: Preparing env...'
 #fi
 
 #${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID} 1 ${WORKER_ID}
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_trial ${JOB_ID} 1 ${TRIAL_ID}
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_trial ${JOB_ID} 0 ${TRIAL_ID}
 
 echo 'SYSTEM: Running...'
 ${ENV_PATH}/bin/python ${SCRIPT}  ${ARGS}
