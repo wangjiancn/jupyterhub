@@ -3,8 +3,9 @@ WORK=/home/jovyan/work
 HOME=/home/jovyan
 JOB_ID=${1}
 WORKER_ID=${2}
-SCRIPT=${3}
-ARGS=${4}
+TRIAL_ID=${3}
+SCRIPT=${4}
+ARGS=${5}
 
 echo JOB_ID
 echo WORKER_ID
@@ -45,14 +46,14 @@ echo 'SYSTEM: Preparing env...'
 #    ${ENV_PATH}/bin/pip install  -r ${WORK}/requirements.txt
 #fi
 
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_trial ${JOB_ID} 1 ${WORKER_ID}
+#${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID} 1 ${WORKER_ID}
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_trial ${JOB_ID} 1 ${TRIAL_ID}
 
 echo 'SYSTEM: Running...'
 ${ENV_PATH}/bin/python ${SCRIPT}  ${ARGS}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_trial ${JOB_ID} ${SUCCESS} ${WORKER_ID}
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_trial ${JOB_ID} ${SUCCESS} ${TRIAL_ID}
 if [ ${SUCCESS} != 0 ] ; then
     echo 'SYSTEM: Error Exists!'
     exit 1

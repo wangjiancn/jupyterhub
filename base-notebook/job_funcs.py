@@ -24,11 +24,15 @@ def insert_module():
         PY_SERVER=PY_SERVER, job_id=job_id))
 
 
+def insert_module_trial():
+    requests.put('{PY_SERVER}/jobs/{job_id}/{worker_id}/insert_modules'.format(
+        PY_SERVER=PY_SERVER, job_id=job_id, worker_id=worker_id,))
+
+
 def start_trial():
     requests.put(
-        '{PY_SERVER}/jobs/{job_id}/{worker_id}/start/{if_success}'.format(
-            PY_SERVER=PY_SERVER, job_id=job_id, worker_id=worker_id,
-            if_success=if_success))
+        '{PY_SERVER}/jobs/{job_id}/{worker_id}/start'.format(
+            PY_SERVER=PY_SERVER, job_id=job_id, worker_id=worker_id))
 
 
 def finish_trial():
