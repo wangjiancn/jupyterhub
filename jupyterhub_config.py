@@ -16,7 +16,7 @@ ENV = 'ZJU'
 # ENV = 'LOCAL'
 
 if ENV == 'ZJU':
-    SERVER = 'http://10.214.223.222:5005'
+    SERVER = 'http://10.214.223.202:5005'
 else:
     SERVER = 'http://localhost:5005'
 
