@@ -1576,7 +1576,7 @@ c.KubeSpawner.extra_container_config = {
         },
         'requests': {
             'cpu': '0.01',
-            'memory': '1Mi'
+            'memory': '100Mi'
         }
     }
 }
@@ -1596,7 +1596,7 @@ c.KubeSpawner.volumes = [
         "name": volume_name,
         # "persistentVolumeClaim": {
         #     "claimName": CLAIM_NAME
-        # }cd
+        # }
         'hostPath': {
             # directory location on host
             'path': '/mnt/'+USER_DIRECTORY+'/{user_ID}/{project_name}',
