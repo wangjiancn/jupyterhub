@@ -84,7 +84,6 @@ import jupyterhub
 import requests
 
 
-
 class MyKubeSpawner(KubeSpawner):
     """
     deal with tb and pyls ports, run some shell scripts when starting
@@ -309,8 +308,8 @@ class MyKubeSpawner(KubeSpawner):
 
         self.insert_envs(self.user.name)
         self.install_reset_req(self.user.name)
-
         self.insert_dataset(self.user.name)
+
         return (pod.status.pod_ip, self.port)
 
 
