@@ -84,7 +84,6 @@ import jupyterhub
 import requests
 
 
-
 class MyKubeSpawner(KubeSpawner):
     """
     deal with tb and pyls ports, run some shell scripts when starting
@@ -309,8 +308,8 @@ class MyKubeSpawner(KubeSpawner):
 
         self.insert_envs(self.user.name)
         self.install_reset_req(self.user.name)
-
         self.insert_dataset(self.user.name)
+
         return (pod.status.pod_ip, self.port)
 
 
@@ -1575,8 +1574,8 @@ c.KubeSpawner.extra_container_config = {
             'memory': '4Gi'
         },
         'requests': {
-            'cpu': '0.01',
-            'memory': '1Mi'
+            'cpu': '0.1',
+            'memory': '100Mi'
         }
     }
 }
@@ -1596,7 +1595,7 @@ c.KubeSpawner.volumes = [
         "name": volume_name,
         # "persistentVolumeClaim": {
         #     "claimName": CLAIM_NAME
-        # }cd
+        # }
         'hostPath': {
             # directory location on host
             'path': '/mnt/'+USER_DIRECTORY+'/{user_ID}/{project_name}',
