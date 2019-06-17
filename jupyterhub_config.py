@@ -16,7 +16,7 @@ ENV = 'DEV'
 # ENV = 'LOCAL'
 
 if ENV == 'ZJU':
-    SERVER = 'http://10.214.223.222:5005'
+    SERVER = 'http://10.214.223.202:5005'
 else:
     SERVER = 'http://localhost:5005'
 
@@ -1574,7 +1574,7 @@ c.KubeSpawner.extra_container_config = {
             'memory': '4Gi'
         },
         'requests': {
-            'cpu': '0.01',
+            'cpu': '0.1',
             'memory': '100Mi'
         }
     }
@@ -1595,7 +1595,7 @@ c.KubeSpawner.volumes = [
         "name": volume_name,
         # "persistentVolumeClaim": {
         #     "claimName": CLAIM_NAME
-        # }cd
+        # }
         'hostPath': {
             # directory location on host
             'path': '/mnt/'+USER_DIRECTORY+'/{user_ID}/{project_name}',
