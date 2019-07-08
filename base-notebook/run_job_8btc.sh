@@ -28,9 +28,6 @@ if [ ! -f ${WORK}/${SCRIPT} ] ; then
     exit 1
 fi
 
-cd ${WORK}
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
-
 echo 'SYSTEM: Running...'
 ${ENV_PATH}/bin/python ${SCRIPT}
 SUCCESS=$?
