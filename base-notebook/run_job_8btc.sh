@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-WORK=/mnt/input
+WORK=/mnt/input/work
 HOME=/home/jovyan
 JOB_ID=${1}
 SCRIPT=${2}
@@ -29,9 +29,8 @@ if [ ! -f ${WORK}/${SCRIPT} ] ; then
 fi
 
 cd ${WORK}
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
-
 echo 'SYSTEM: Running...'
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_job ${JOB_ID}
 ${ENV_PATH}/bin/python ${SCRIPT}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
