@@ -14,6 +14,11 @@ except IndexError:
     pass
 
 
+def start_job():
+    requests.put('{PY_SERVER}/jobs/{job_id}/start'.format(
+        PY_SERVER=PY_SERVER, job_id=job_id))
+
+
 def finish_job():
     requests.put('{PY_SERVER}/jobs/{job_id}/finish/{if_success}'.format(
         PY_SERVER=PY_SERVER, job_id=job_id, if_success=if_success))
@@ -26,7 +31,7 @@ def insert_module():
 
 def insert_module_trial():
     requests.put('{PY_SERVER}/jobs/{job_id}/{worker_id}/insert_modules'.format(
-        PY_SERVER=PY_SERVER, job_id=job_id, worker_id=worker_id,))
+        PY_SERVER=PY_SERVER, job_id=job_id, worker_id=worker_id, ))
 
 
 def start_trial():

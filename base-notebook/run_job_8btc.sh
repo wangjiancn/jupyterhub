@@ -29,6 +29,9 @@ if [ ! -f ${WORK}/${SCRIPT} ] ; then
 fi
 
 echo 'SYSTEM: Running...'
+
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_job ${JOB_ID}
+
 ${ENV_PATH}/bin/python ${SCRIPT}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
