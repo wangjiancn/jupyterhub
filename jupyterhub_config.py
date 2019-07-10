@@ -9,14 +9,17 @@ SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
-ENV = 'DEV'
+# ENV = 'DEV'
 # ENV = 'PROD'
 # ENV = 'MO'
 # ENV = 'ZJU'
 # ENV = 'LOCAL'
+ENV = 'ZKY'
 
 if ENV == 'ZJU':
-    SERVER = 'http://10.214.223.202:5005'
+    SERVER = 'http://10.214.223.222:5005'
+elif ENV == 'ZKY':
+    SERVER = 'http://10.3.3.1:5005'
 else:
     SERVER = 'http://localhost:5005'
 
@@ -1506,7 +1509,7 @@ c.Authenticator.admin_users = {'admin'}
 
 
 # dev
-if ENV in ['MO', 'ZJU']:
+if ENV in ['MO', 'ZJU', 'ZKY']:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
@@ -1548,6 +1551,11 @@ elif ENV == 'MO':
 elif ENV == 'ZJU':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://10.214.223.221:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+elif ENV == 'ZKY':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://10.3.3.2:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
 c.KubeSpawner.extra_container_config = {
