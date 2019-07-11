@@ -4,6 +4,8 @@ LABEL maintainer="Mo Model Team"
 
 USER root
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # fix nvidia repo connection inside GFW
 RUN rm -f /etc/apt/sources.list.d/cuda.list
 RUN rm -f /etc/apt/sources.list.d/nvidia-ml.list
