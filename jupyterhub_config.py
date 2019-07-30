@@ -107,7 +107,6 @@ class MyKubeSpawner(KubeSpawner):
         # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
         return ['bash', '/home/jovyan/run.sh']
 
-
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels
         # Note: '-' is not in safe_chars, as it is being used as escape character
@@ -123,7 +122,8 @@ class MyKubeSpawner(KubeSpawner):
 
         legacy_escaped_username = ''.join(
             [s if s in safe_chars else '-' for s in self.user.name.lower()])
-        safe_username = escapism.escape(self.user.name, safe=safe_chars,
+        safe_username = escapism.escape(self.user.name.lower(),
+                                        safe=safe_chars,
                                         escape_char='-').lower()
         split_username = self.user.name.split('+')
         # print('split_username:', split_username, self.user.name, self.name)
@@ -163,7 +163,8 @@ class MyKubeSpawner(KubeSpawner):
         :param project_name:
         :return: dict of res json
         """
-        return requests.put(f'{SERVER}/project/mount_all_dataset/{project_name}')
+        return requests.put(
+            f'{SERVER}/project/mount_all_dataset/{project_name}')
 
     @staticmethod
     def install_reset_req(project_name):
@@ -1606,7 +1607,7 @@ c.KubeSpawner.volumes = [
         # }
         'hostPath': {
             # directory location on host
-            'path': '/mnt/'+USER_DIRECTORY+'/{user_ID}/{project_name}',
+            'path': '/mnt/' + USER_DIRECTORY + '/{user_ID}/{project_name}',
             # this field is optional
             'type': 'Directory',
         }
