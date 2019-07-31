@@ -17,7 +17,7 @@ ENV = 'DEV'
 # ENV = 'ZKY'
 
 if ENV == 'ZJU':
-    SERVER = 'http://10.214.223.222:5005'
+    SERVER = 'http://10.214.223.202:5005'
 elif ENV == 'ZKY':
     SERVER = 'http://10.3.3.1:5005'
 else:
