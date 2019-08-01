@@ -123,8 +123,9 @@ class MyKubeSpawner(KubeSpawner):
 
         legacy_escaped_username = ''.join(
             [s if s in safe_chars else '-' for s in self.user.name.lower()])
-        safe_username = escapism.escape(self.user.name, safe=safe_chars,
-                                        escape_char='-').lower()
+        safe_username = escapism.escape(self.user.name,
+                                        safe=safe_chars,
+                                        escape_char='').lower()
         split_username = self.user.name.split('+')
         # print('split_username:', split_username, self.user.name, self.name)
         if len(split_username) <= 1 and self.user.name != 'admin':
