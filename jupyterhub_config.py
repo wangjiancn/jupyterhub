@@ -17,7 +17,7 @@ ENV = 'DEV'
 # ENV = 'ZKY'
 
 if ENV == 'ZJU':
-    SERVER = 'http://10.214.223.222:5005'
+    SERVER = 'http://10.214.223.202:5005'
 elif ENV == 'ZKY':
     SERVER = 'http://10.3.3.1:5005'
 else:
@@ -107,7 +107,6 @@ class MyKubeSpawner(KubeSpawner):
         # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
         return ['bash', '/home/jovyan/run.sh']
 
-
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels
         # Note: '-' is not in safe_chars, as it is being used as escape character
@@ -164,7 +163,8 @@ class MyKubeSpawner(KubeSpawner):
         :param project_name:
         :return: dict of res json
         """
-        return requests.put(f'{SERVER}/project/mount_all_dataset/{project_name}')
+        return requests.put(
+            f'{SERVER}/project/mount_all_dataset/{project_name}')
 
     @staticmethod
     def install_reset_req(project_name):
@@ -1607,7 +1607,7 @@ c.KubeSpawner.volumes = [
         # }
         'hostPath': {
             # directory location on host
-            'path': '/mnt/'+USER_DIRECTORY+'/{user_ID}/{project_name}',
+            'path': '/mnt/' + USER_DIRECTORY + '/{user_ID}/{project_name}',
             # this field is optional
             'type': 'Directory',
         }

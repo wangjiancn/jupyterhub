@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:latest-py3
+FROM tensorflow/tensorflow:1.13.1-py3
 
 LABEL maintainer="Mo Model Team"
 
