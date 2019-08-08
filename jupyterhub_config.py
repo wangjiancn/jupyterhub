@@ -15,6 +15,7 @@ ENV = 'DEV'
 # ENV = 'ZJU'
 # ENV = 'LOCAL'
 # ENV = 'ZKY'
+# ENV = 'TEST'
 
 if ENV == 'ZJU':
     SERVER = 'http://10.214.223.202:5005'
@@ -1557,6 +1558,11 @@ elif ENV == 'ZJU':
 elif ENV == 'ZKY':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://10.3.3.2:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+elif ENV == 'TEST':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://192.168.31.89:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
 c.KubeSpawner.extra_container_config = {
