@@ -13,3 +13,5 @@ minio
 baytune
 yellowbrick
 Augmentor
+minepy
+plotly
