@@ -15,3 +15,4 @@ yellowbrick
 Augmentor
 minepy
 plotly
+numpy==1.16
