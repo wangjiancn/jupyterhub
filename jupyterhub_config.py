@@ -21,6 +21,8 @@ if ENV == 'ZJU':
     SERVER = 'http://10.214.223.202:5005'
 elif ENV == 'ZKY':
     SERVER = 'http://10.3.3.1:5005'
+elif ENV == 'MO':
+    SERVER = 'http://192.168.1.79:8899/pyapi'
 else:
     SERVER = 'http://localhost:5005'
 
@@ -54,7 +56,7 @@ class SuperSecureAuthenticator(Authenticator):
         # decode token:
         token_data = jwt.decode(data['password'], SECRET, algorithms=[
             ALGORITHM])
-        print(tmp_username, unhash_name, token_data[IDENTITY])
+        # print(tmp_username, unhash_name, token_data[IDENTITY])
         if token_data[IDENTITY] == unhash_name:
             # if token_data[IDENTITY] == 'zhaofengli':
             # print('user tmp_username:', tmp_username)
