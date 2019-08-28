@@ -9,9 +9,9 @@ SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
-ENV = 'DEV'
+# ENV = 'DEV'
 # ENV = 'PROD'
-# ENV = 'MO'
+ENV = 'MO'
 # ENV = 'ZJU'
 # ENV = 'LOCAL'
 # ENV = 'ZKY'
@@ -21,6 +21,8 @@ if ENV == 'ZJU':
     SERVER = 'http://10.214.223.202:5005'
 elif ENV == 'ZKY':
     SERVER = 'http://10.3.3.1:5005'
+elif ENV == 'MO':
+    SERVER = 'http://192.168.1.79:5005'
 else:
     SERVER = 'http://localhost:5005'
 
