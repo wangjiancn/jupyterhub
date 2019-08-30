@@ -16,3 +16,4 @@ Augmentor
 minepy
 plotly
 numpy==1.16
+ipywidgets==7.4
