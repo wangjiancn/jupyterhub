@@ -9,9 +9,9 @@ SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
-# ENV = 'DEV'
+ENV = 'DEV'
 # ENV = 'PROD'
-ENV = 'MO'
+# ENV = 'MO'
 # ENV = 'ZJU'
 # ENV = 'LOCAL'
 # ENV = 'ZKY'
@@ -56,7 +56,7 @@ class SuperSecureAuthenticator(Authenticator):
         # decode token:
         token_data = jwt.decode(data['password'], SECRET, algorithms=[
             ALGORITHM])
-        print(tmp_username, unhash_name, token_data[IDENTITY])
+        # print(tmp_username, unhash_name, token_data[IDENTITY])
         if token_data[IDENTITY] == unhash_name:
             # if token_data[IDENTITY] == 'zhaofengli':
             # print('user tmp_username:', tmp_username)
