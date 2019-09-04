@@ -71,7 +71,7 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     workon basenv && \
     pip --default-timeout=100 install -U opencv-python nltk notebook seaborn keras Cython && \
     pip --default-timeout=100 install -r requirements.txt && \
-    pip --default-timeout=100 install jupyterhub==0.8.1 && \
+    pip --default-timeout=100 install jupyterhub==1.0.0 && \
     toggleglobalsitepackages
 
 USER root
