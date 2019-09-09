@@ -17,6 +17,8 @@ ENV = 'DEV'
 # ENV = 'ZKY'
 # ENV = 'TEST'
 
+origin = '*'
+
 if ENV == 'ZJU':
     SERVER = 'http://10.214.223.202:5005'
 elif ENV == 'ZKY':
@@ -1067,7 +1069,14 @@ c.JupyterHub.spawner_class = MyKubeSpawner
 # c.JupyterHub.template_paths = []
 
 ## Extra settings overrides to pass to the tornado application.
-# c.JupyterHub.tornado_settings = {}
+c.JupyterHub.tornado_settings = {
+    'headers': {
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Methods': 'GET, PUT, POST, PATCH, DELETE, OPTIONS',
+        "Access-Control-Allow-Headers": "*",
+        "Sec-Fetch-Mode": "cors",
+    }
+}
 
 ## Trust user-provided tokens (via JupyterHub.service_tokens) to have good
 #  entropy.
@@ -1115,7 +1124,7 @@ c.JupyterHub.trust_user_provided_tokens = True
 #  environment variables here. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 
-c.Spawner.args = []
+c.Spawner.args = [f'--NotebookApp.allow_origin={origin}']
 
 ## The command used for starting the single-user server.
 #
