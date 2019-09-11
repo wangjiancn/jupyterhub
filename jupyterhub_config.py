@@ -1072,7 +1072,7 @@ c.JupyterHub.spawner_class = MyKubeSpawner
 c.JupyterHub.tornado_settings = {
     'headers': {
         'Access-Control-Allow-Origin': origin,
-        'Access-Control-Allow-Methods': 'GET, PUT, POST, PATCH, DELETE, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
         "Access-Control-Allow-Headers": "*",
         "Sec-Fetch-Mode": "cors",
     }
