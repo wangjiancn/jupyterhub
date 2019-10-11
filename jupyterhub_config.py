@@ -22,7 +22,7 @@ if ENV == 'ZJU':
 elif ENV == 'ZKY':
     SERVER = 'http://10.3.3.1:5005'
 elif ENV == 'MO':
-    SERVER = 'http://192.168.1.79:5005'
+    SERVER = 'http://192.168.1.79:8899/pyapi'
 elif ENV == 'PROD':
     SERVER = 'http://192.168.31.11:5005'
 elif ENV == 'TEST':
