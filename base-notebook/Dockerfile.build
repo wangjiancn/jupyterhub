@@ -64,7 +64,7 @@ ADD requirements.txt .
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     mkvirtualenv jlenv && \
     workon jlenv && \
-    pip --default-timeout=100 install jupyterlab==1.0.0a1 'python-language-server[all]' -i https://pypi.python.org/simple && \
+    pip --default-timeout=100 install jupyterlab==1.1.4 'python-language-server[all]' -i https://pypi.python.org/simple && \
     toggleglobalsitepackages && \
     #make basenv
     mkvirtualenv basenv && \
