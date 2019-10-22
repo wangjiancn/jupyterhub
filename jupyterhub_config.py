@@ -24,7 +24,11 @@ if ENV == 'ZJU':
 elif ENV == 'ZKY':
     SERVER = 'http://10.3.3.1:5005'
 elif ENV == 'MO':
-    SERVER = 'http://192.168.1.79:5005'
+    SERVER = 'http://192.168.1.79:8899/pyapi'
+elif ENV == 'PROD':
+    SERVER = 'http://192.168.31.11:5005'
+elif ENV == 'TEST':
+    SERVER = 'http://192.168.31.89:5005'
 else:
     SERVER = 'http://localhost:5005'
 
@@ -1600,8 +1604,8 @@ c.KubeSpawner.extra_container_config = {
             'memory': '4Gi'
         },
         'requests': {
-            'cpu': '0.1',
-            'memory': '100Mi'
+            'cpu': '0.2',
+            'memory': '500Mi'
         }
     }
 }
