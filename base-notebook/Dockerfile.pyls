@@ -17,4 +17,6 @@ RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 EXPOSE 3000
 WORKDIR /home/jovyan/work
 
-CMD ['bash', '/home/jovyan/run_pyls.sh']
+
+CMD 'bash' '/home/jovyan/run_pyls.sh'
+

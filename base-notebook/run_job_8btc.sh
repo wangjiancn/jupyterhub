@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
-WORK=/home/jovyan/work
+WORK=/mnt/input/work
 HOME=/home/jovyan
 JOB_ID=${1}
 SCRIPT=${2}
-RUN_FUNC=${3}
-TASK_ID=${4}
-ARGS=${5}
-
+ARGS=${3}
 echo 'SYSTEM: Preparing env...'
 
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
@@ -33,10 +30,9 @@ if [ ! -f ${WORK}/${SCRIPT} ] ; then
 fi
 
 cd ${WORK}
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
-
 echo 'SYSTEM: Running...'
-${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC} ${TASK_ID} ${ARGS}
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_job ${JOB_ID}
+${ENV_PATH}/bin/python ${SCRIPT} ${ARGS}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}

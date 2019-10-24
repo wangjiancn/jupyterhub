@@ -9,6 +9,29 @@ SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
+ENV = 'DEV'
+# ENV = 'PROD'
+# ENV = 'MO'
+# ENV = 'ZJU'
+# ENV = 'LOCAL'
+# ENV = 'ZKY'
+# ENV = 'TEST'
+
+origin = '*'
+
+if ENV == 'ZJU':
+    SERVER = 'http://10.214.223.202:5005'
+elif ENV == 'ZKY':
+    SERVER = 'http://10.3.3.1:5005'
+elif ENV == 'MO':
+    SERVER = 'http://192.168.1.79:8899/pyapi'
+elif ENV == 'PROD':
+    SERVER = 'http://192.168.31.11:5005'
+elif ENV == 'TEST':
+    SERVER = 'http://192.168.31.89:5005'
+else:
+    SERVER = 'http://localhost:5005'
+
 import base64
 from Crypto.Cipher import AES
 
@@ -39,7 +62,7 @@ class SuperSecureAuthenticator(Authenticator):
         # decode token:
         token_data = jwt.decode(data['password'], SECRET, algorithms=[
             ALGORITHM])
-        print(tmp_username, unhash_name, token_data[IDENTITY])
+        # print(tmp_username, unhash_name, token_data[IDENTITY])
         if token_data[IDENTITY] == unhash_name:
             # if token_data[IDENTITY] == 'zhaofengli':
             # print('user tmp_username:', tmp_username)
@@ -72,8 +95,6 @@ import escapism
 import jupyterhub
 import requests
 
-SERVER = 'http://localhost:5005'
-
 
 class MyKubeSpawner(KubeSpawner):
     """
@@ -95,7 +116,6 @@ class MyKubeSpawner(KubeSpawner):
         # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
         return ['bash', '/home/jovyan/run.sh']
 
-
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels
         # Note: '-' is not in safe_chars, as it is being used as escape character
@@ -111,8 +131,9 @@ class MyKubeSpawner(KubeSpawner):
 
         legacy_escaped_username = ''.join(
             [s if s in safe_chars else '-' for s in self.user.name.lower()])
-        safe_username = escapism.escape(self.user.name, safe=safe_chars,
-                                        escape_char='-').lower()
+        safe_username = escapism.escape(self.user.name,
+                                        safe=safe_chars,
+                                        escape_char='').lower()
         split_username = self.user.name.split('+')
         # print('split_username:', split_username, self.user.name, self.name)
         if len(split_username) <= 1 and self.user.name != 'admin':
@@ -151,7 +172,8 @@ class MyKubeSpawner(KubeSpawner):
         :param project_name:
         :return: dict of res json
         """
-        return requests.put(f'{SERVER}/project/mount_all_dataet/{project_name}')
+        return requests.put(
+            f'{SERVER}/project/mount_all_dataset/{project_name}')
 
     @staticmethod
     def install_reset_req(project_name):
@@ -299,8 +321,8 @@ class MyKubeSpawner(KubeSpawner):
 
         self.insert_envs(self.user.name)
         self.install_reset_req(self.user.name)
-
         self.insert_dataset(self.user.name)
+
         return (pod.status.pod_ip, self.port)
 
 
@@ -1051,7 +1073,14 @@ c.JupyterHub.spawner_class = MyKubeSpawner
 # c.JupyterHub.template_paths = []
 
 ## Extra settings overrides to pass to the tornado application.
-# c.JupyterHub.tornado_settings = {}
+c.JupyterHub.tornado_settings = {
+    'headers': {
+        'Access-Control-Allow-Origin': origin,
+        'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
+        "Access-Control-Allow-Headers": "*",
+        "Sec-Fetch-Mode": "cors",
+    }
+}
 
 ## Trust user-provided tokens (via JupyterHub.service_tokens) to have good
 #  entropy.
@@ -1099,7 +1128,7 @@ c.JupyterHub.trust_user_provided_tokens = True
 #  environment variables here. Most, including the default, do not. Consult the
 #  documentation for your spawner to verify!
 
-c.Spawner.args = []
+c.Spawner.args = [f'--NotebookApp.allow_origin={origin}']
 
 ## The command used for starting the single-user server.
 #
@@ -1495,13 +1524,9 @@ c.Authenticator.admin_users = {'admin'}
 # user_path = os.path.abspath(cwd). \
 #     replace('jupyterhub', 'user_directory/{user_ID}/{project_name}')
 
-ENV = 'DEV'
-# ENV = 'PROD'
-# ENV = 'MO'
-# ENV = 'LOCAL'
 
 # dev
-if ENV == 'MO':
+if ENV in ['MO', 'ZJU', 'ZKY']:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
@@ -1540,6 +1565,21 @@ elif ENV == 'MO':
         'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
+elif ENV == 'ZJU':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://10.214.223.221:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+elif ENV == 'ZKY':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://10.3.3.2:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+elif ENV == 'TEST':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://192.168.31.89:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
 c.KubeSpawner.extra_container_config = {
     'ports': [
         {
@@ -1564,8 +1604,8 @@ c.KubeSpawner.extra_container_config = {
             'memory': '4Gi'
         },
         'requests': {
-            'cpu': '0.01',
-            'memory': '1Mi'
+            'cpu': '0.2',
+            'memory': '500Mi'
         }
     }
 }
@@ -1585,10 +1625,10 @@ c.KubeSpawner.volumes = [
         "name": volume_name,
         # "persistentVolumeClaim": {
         #     "claimName": CLAIM_NAME
-        # }cd
+        # }
         'hostPath': {
             # directory location on host
-            'path': '/mnt/'+USER_DIRECTORY+'/{user_ID}/{project_name}',
+            'path': '/mnt/' + USER_DIRECTORY + '/{user_ID}/{project_name}',
             # this field is optional
             'type': 'Directory',
         }

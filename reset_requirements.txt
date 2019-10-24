@@ -101,3 +101,7 @@ webencodings==
 Werkzeug==
 widgetsnbextension==
 yapf==
+minio==
+baytune==
+yellowbrick==
+Augmentor==

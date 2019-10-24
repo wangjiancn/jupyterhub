@@ -1,12 +1,14 @@
-FROM tensorflow/tensorflow:latest-py3
+FROM tensorflow/tensorflow:1.13.1-py3
 
 LABEL maintainer="Mo Model Team"
 
 USER root
 
+RUN apt-get update && apt-get install -yq curl
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 # To change the datetime from UTC to Asia/Shanghai
-RUN apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex \
+&& apt-get clean && rm -rf /var/lib/apt/lists/*
 # After install node, python2 will be installed
 # move back python3 to be default python
 #RUN ln -snf /usr/bin/python3 /usr/bin/python
@@ -42,7 +44,8 @@ RUN chown -R jovyan:users /home/jovyan/.pip
 #ADD pyls /home/jovyan/pyls
 #RUN chown -R jovyan:users /home/jovyan/pyls
 
-RUN pip install virtualenvwrapper virtualenv-clone tensorboard==1.11.0
+ADD base_requirements.txt .
+RUN pip install -r base_requirements.txt
 
 USER $NB_UID
 
@@ -68,15 +71,17 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     workon basenv && \
     pip --default-timeout=100 install -U opencv-python nltk notebook seaborn keras Cython && \
     pip --default-timeout=100 install -r requirements.txt && \
-    pip --default-timeout=100 install jupyterhub==0.8.1 && \
-    pip install http://download.pytorch.org/whl/cu92/torch-0.4.1-cp35-cp35m-linux_x86_64.whl && \
-    pip install torchvision && \
+    pip --default-timeout=100 install jupyterhub==1.0.0 && \
+    pip --default-timeout=100 install torch==1.3.0+cpu torchvision==0.4.1+cpu -f https://download.pytorch.org/whl/torch_stable.html && \
     toggleglobalsitepackages
 
 USER root
 
 ADD run.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run.sh
+
+ADD run_tb.sh /home/jovyan
+RUN chown jovyan:users /home/jovyan/run_tb.sh
 
 ADD add_venv.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/add_venv.sh

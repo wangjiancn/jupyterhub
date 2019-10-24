@@ -1,0 +1,3 @@
+virtualenvwrapper
+virtualenv-clone
+matplotlib
