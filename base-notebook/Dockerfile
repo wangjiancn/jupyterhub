@@ -39,8 +39,8 @@ RUN groupadd wheel -g 11 && \
 ADD pip.conf /home/jovyan/.pip/pip.conf
 RUN chown -R jovyan:users /home/jovyan/.pip
 
-ADD pyls /home/jovyan/pyls
-RUN chown -R jovyan:users /home/jovyan/pyls
+#ADD pyls /home/jovyan/pyls
+#RUN chown -R jovyan:users /home/jovyan/pyls
 
 RUN pip install virtualenvwrapper virtualenv-clone tensorboard==1.11.0
 
@@ -54,7 +54,7 @@ ENV VIRTUALENVWRAPPER_PYTHON $USR_DIR/bin/python3
 ENV VIRTUALENVWRAPPER_VIRTUALENV $LOCAL_DIR/bin/virtualenv
 SHELL ["/bin/bash", "-c"]
 
-RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
+#RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
 ADD requirements.txt .
 
