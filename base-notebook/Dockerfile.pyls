@@ -16,7 +16,7 @@ RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
 USER root
 
-EXPOSE 3000
+EXPOSE 3111
 WORKDIR /home/jovyan/work
 
 
