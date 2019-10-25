@@ -11,10 +11,11 @@ RUN chown jovyan:users /home/jovyan/run_pyls.sh
 
 USER jovyan
 
-RUN cd /home/jovyan/pyls && npm i && npm run build
+RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
 
 USER root
+
 EXPOSE 3000
 WORKDIR /home/jovyan/work
 
