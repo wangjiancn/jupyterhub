@@ -23,6 +23,6 @@ workon .localenv
 #echo 3 `date`
 
 #tensorboard --logdir=${WORK}/results/tb_results --host=0.0.0.0 &
-cd /home/jovyan/pyls && npm run start:ext &
+#cd /home/jovyan/pyls && npm run start:ext &
 ${WORK}/.localenv/bin/jupyter labhub --ip=0.0.0.0 --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10000000000 \
 --NotebookApp.notebook_dir=${WORK} --NotebookApp.default_dir=/lab/tree/_OVERVIEW.md
