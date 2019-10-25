@@ -7,8 +7,6 @@ xlrd
 jieba
 word2vec
 tqdm
-torch
-torchvision
 minio
 baytune
 yellowbrick
