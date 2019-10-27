@@ -24,7 +24,7 @@ const app = express();
 // app.use(express.static(__dirname));
 
 // start the server
-const server = app.listen(3000);
+const server = app.listen(3111);
 // create the web socket
 const wss = new ws.Server({
     noServer: true,
