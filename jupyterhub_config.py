@@ -1610,12 +1610,13 @@ c.KubeSpawner.extra_container_config = {
     }
 }
 
-# run notebooks on cpu nodes
-c.KubeSpawner.extra_pod_config = {
-    'nodeSelector': {
-        'accelerator': 'non-gpu'
+if ENV == 'MO':
+    # run notebooks on cpu nodes
+    c.KubeSpawner.extra_pod_config = {
+        'nodeSelector': {
+            'accelerator': 'non-gpu'
+        }
     }
-}
 
 # c.DockerSpawner.remove_containers = True
 # c.DockerSpawner.container_ip = '0.0.0.0'
