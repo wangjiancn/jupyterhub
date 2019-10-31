@@ -71,7 +71,7 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     workon basenv && \
     pip --default-timeout=100 install -U opencv-python nltk notebook seaborn keras Cython && \
     pip --default-timeout=100 install -r requirements.txt && \
-    pip --default-timeout=100 install jupyterhub==1.0.0 && \
+    pip --default-timeout=100 install jupyterhub==1.0.0 pip==19.2.3 && \
     pip --default-timeout=100 install torch==1.3.0+cpu torchvision==0.4.1+cpu -f https://download.pytorch.org/whl/torch_stable.html && \
     toggleglobalsitepackages
 
