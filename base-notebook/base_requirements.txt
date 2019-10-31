@@ -1,3 +1,4 @@
 virtualenvwrapper
 virtualenv-clone
 matplotlib
+requests
