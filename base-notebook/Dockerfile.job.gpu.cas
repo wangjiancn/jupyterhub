@@ -1,0 +1,19 @@
+FROM magicalion/singleuser:gpu-cas
+
+USER $NB_UID
+
+EXPOSE 8888
+WORKDIR /home/$NB_USER/work
+
+USER root
+
+ADD sc.py /usr/lib/python3.5/sitecustomize.py
+
+ADD run_job_8btc.sh /home/jovyan
+RUN mv /home/jovyan/run_job_8btc.sh /home/jovyan/run_job.sh
+RUN chown jovyan:users /home/jovyan/run_job.sh
+
+ADD job_funcs.py /home/jovyan
+RUN chown jovyan:users /home/jovyan/job_funcs.py
+
+CMD ['bash', '/home/jovyan/run_job.sh']
