@@ -1611,15 +1611,9 @@ c.KubeSpawner.extra_container_config = {
 }
 
 
-if ENV in ['MO', 'ZJU', 'ZKY']:
-    # TODO: change to pod.spec.hostname after k8s v1.13
-    c.KubeSpawner.extra_annotations = {
-        'pod.beta.kubernetes.io/hostname': 'notebook'
-    }
-else:
-    c.KubeSpawner.extra_pod_config = {
-        'hostname': 'notebook',
-    }
+c.KubeSpawner.extra_pod_config = {
+    'hostname': 'notebook',
+}
 
 if ENV in ['MO']:
     c.KubeSpawner.extra_pod_config = {
