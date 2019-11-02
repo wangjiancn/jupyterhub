@@ -1616,11 +1616,9 @@ c.KubeSpawner.extra_pod_config = {
 }
 
 if ENV in ['MO']:
-    c.KubeSpawner.extra_pod_config = {
+    c.KubeSpawner.extra_pod_config['nodeSelector'] = {
         # run notebooks on cpu nodes
-        'nodeSelector': {
-            'accelerator': 'non-gpu'
-        }
+        'accelerator': 'non-gpu'
     }
 
 # c.DockerSpawner.remove_containers = True
