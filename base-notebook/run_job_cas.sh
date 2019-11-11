@@ -1,23 +1,20 @@
 #!/usr/bin/env bash
-WORK=/home/jovyan/work
-HOME=/home/jovyan
+WORK=/mnt/input/work
+HOME=/mnt/
 JOB_ID=${1}
 SCRIPT=${2}
-RUN_FUNC=${3}
-TASK_ID=${4}
-ARGS=${5}
-
+ARGS=${3}
 echo 'SYSTEM: Preparing env...'
 
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
 source /usr/local/bin/virtualenvwrapper.sh
 
-ENV_PATH=/home/jovyan/.virtualenvs/${JOB_ID}
+ENV_PATH=${HOME}/.virtualenvs/${JOB_ID}
 path_file=${ENV_PATH}/lib/python3.5/site-packages/_virtualenv_path_extensions.pth
 
 if [ ! -e ${ENV_PATH} ] ; then
-    virtualenv-clone /home/jovyan/.virtualenvs/jlenv ${ENV_PATH}
+    virtualenv-clone ${HOME}/.virtualenvs/jlenv ${ENV_PATH}
 fi
 
 workon ${JOB_ID}
@@ -33,14 +30,12 @@ if [ ! -f ${WORK}/${SCRIPT} ] ; then
 fi
 
 cd ${WORK}
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
-
 echo 'SYSTEM: Running...'
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_job ${JOB_ID}
-${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC} ${TASK_ID} ${ARGS}
+${ENV_PATH}/bin/python ${HOME}/job_funcs.py start_job ${JOB_ID}
+${ENV_PATH}/bin/python ${SCRIPT} ${ARGS}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
-${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
+${ENV_PATH}/bin/python ${HOME}/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
 if [ ${SUCCESS} != 0 ] ; then
     echo 'SYSTEM: Error Exists!'
     exit 1

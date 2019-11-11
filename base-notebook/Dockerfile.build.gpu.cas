@@ -27,10 +27,10 @@ ENV USR_DIR=/usr \
     LOCAL_DIR=/usr/local \
     SHELL=/bin/bash \
     NB_USER=jovyan \
-    NB_UID=1297 \
-    NB_GID=1297
+    NB_UID=1000 \
+    NB_GID=100
 ENV PATH=$LOCAL_DIR/bin:$PATH \
-    HOME=/home/$NB_USER
+    HOME=/mnt/
 ENV LANG=C.UTF-8
 
 ADD fix-permissions /usr/local/bin/fix-permissions
@@ -45,8 +45,8 @@ RUN groupadd wheel -g 11 && \
     fix-permissions $HOME && \
     fix-permissions $LOCAL_DIR
 
-ADD pip.conf /home/jovyan/.pip/pip.conf
-RUN chown -R jovyan:users /home/jovyan/.pip
+ADD pip.conf $HOME/.pip/pip.conf
+RUN chown -R jovyan:users $HOME/.pip
 
 # ADD pyls /home/jovyan/pyls
 # RUN chown -R jovyan:users /home/jovyan/pyls
@@ -84,39 +84,39 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
 
 USER root
 
-ADD run.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/run.sh
+ADD run.sh $HOME
+RUN chown jovyan:users $HOME/run.sh
 
-ADD run_tb.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/run_tb.sh
+ADD run_tb.sh $HOME
+RUN chown jovyan:users $HOME/run_tb.sh
 
-ADD add_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/add_venv.sh
+ADD add_venv.sh $HOME
+RUN chown jovyan:users $HOME/add_venv.sh
 
-ADD install_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/install_venv.sh
+ADD install_venv.sh $HOME
+RUN chown jovyan:users $HOME/install_venv.sh
 
-ADD remove_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/remove_venv.sh
+ADD remove_venv.sh $HOME
+RUN chown jovyan:users $HOME/remove_venv.sh
 
-ADD freeze_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/freeze_venv.sh
+ADD freeze_venv.sh $HOME
+RUN chown jovyan:users $HOME/freeze_venv.sh
 
-ADD modules /home/jovyan/modules
-RUN chown -R jovyan:users /home/jovyan/modules
+ADD modules $HOME/modules
+RUN chown -R jovyan:users $HOME/modules
 
-ADD dataset /home/jovyan/dataset
-RUN chown -R jovyan:users /home/jovyan/dataset
+ADD dataset $HOME/dataset
+RUN chown -R jovyan:users $HOME/dataset
 
-ADD build.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/build.sh
+ADD build.sh $HOME
+RUN chown jovyan:users $HOME/build.sh
 
-ADD update_jl.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/update_jl.sh
+ADD update_jl.sh $HOME
+RUN chown jovyan:users $HOME/update_jl.sh
 
 USER $NB_UID
 
 EXPOSE 8888
-WORKDIR /home/$NB_USER/work
+WORKDIR $HOME/input/work
 
 CMD ['bash', '/home/jovyan/build.sh']

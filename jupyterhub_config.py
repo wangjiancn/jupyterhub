@@ -1611,22 +1611,14 @@ c.KubeSpawner.extra_container_config = {
 }
 
 
-if ENV in ['MO', 'ZJU', 'ZKY']:
-    # TODO: change to pod.spec.hostname after k8s v1.13
-    c.KubeSpawner.extra_annotations = {
-        'pod.beta.kubernetes.io/hostname': 'notebook'
-    }
-else:
-    c.KubeSpawner.extra_pod_config = {
-        'hostname': 'notebook',
-    }
+c.KubeSpawner.extra_pod_config = {
+    'hostname': 'notebook',
+}
 
 if ENV in ['MO']:
-    c.KubeSpawner.extra_pod_config = {
+    c.KubeSpawner.extra_pod_config['nodeSelector'] = {
         # run notebooks on cpu nodes
-        'nodeSelector': {
-            'accelerator': 'non-gpu'
-        }
+        'accelerator': 'non-gpu'
     }
 
 # c.DockerSpawner.remove_containers = True
