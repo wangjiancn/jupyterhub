@@ -45,6 +45,9 @@ RUN groupadd wheel -g 11 && \
     fix-permissions $HOME && \
     fix-permissions $LOCAL_DIR
 
+ADD pip.conf /home/jovyan/.pip/pip.conf
+RUN chown -R jovyan:users /home/jovyan/.pip
+
 ADD base_requirements.txt .
 RUN pip --default-timeout=100 install -r base_requirements.txt
 
