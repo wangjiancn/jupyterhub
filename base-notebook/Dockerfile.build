@@ -38,12 +38,6 @@ RUN groupadd wheel -g 11 && \
     fix-permissions $HOME && \
     fix-permissions $LOCAL_DIR
 
-ADD pip.conf /home/jovyan/.pip/pip.conf
-RUN chown -R jovyan:users /home/jovyan/.pip
-
-# ADD pyls /home/jovyan/pyls
-# RUN chown -R jovyan:users /home/jovyan/pyls
-
 ADD base_requirements.txt .
 RUN pip --default-timeout=100 install -r base_requirements.txt
 
@@ -56,8 +50,6 @@ RUN mkdir /home/$NB_USER/work && \
 ENV VIRTUALENVWRAPPER_PYTHON $USR_DIR/bin/python3
 ENV VIRTUALENVWRAPPER_VIRTUALENV $LOCAL_DIR/bin/virtualenv
 SHELL ["/bin/bash", "-c"]
-
-# RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
 ADD requirements.txt .
 
