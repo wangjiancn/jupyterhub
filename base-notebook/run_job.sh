@@ -36,6 +36,7 @@ cd ${WORK}
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
 
 echo 'SYSTEM: Running...'
+${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_job ${JOB_ID}
 ${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC} ${TASK_ID} ${ARGS}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
