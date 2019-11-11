@@ -45,7 +45,7 @@ RUN chown -R jovyan:users /home/jovyan/.pip
 #RUN chown -R jovyan:users /home/jovyan/pyls
 
 ADD base_requirements.txt .
-RUN pip install -r base_requirements.txt
+RUN pip --default-timeout=100 install -r base_requirements.txt
 
 USER $NB_UID
 
