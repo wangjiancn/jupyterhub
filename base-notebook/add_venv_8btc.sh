@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-M_DIR=/mnt/input/modules/${1}
+M_DIR=/mnt/modules/${1}
 JOB_ID=${2}
-WORK=/mnt/input/work
+WORK=/mnt/work
 HOME=/home/jovyan
 PACKAGE_DIR=${M_DIR}/.localenv/lib/python3.5/site-packages
 

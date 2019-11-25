@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-WORK=/mnt/input/work
+WORK=/mnt/work
 HOME=/mnt/
 JOB_ID=${1}
 SCRIPT=${2}
