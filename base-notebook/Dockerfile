@@ -15,9 +15,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# support export PDF with chinese char
-RUN sed -i 's/\\documentclass\[11pt\]{article}/\\documentclass[11pt]{ctexart}/g' /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/nbconvert/templates/latex/article.tplx
-
 # Configure environment
 ENV USR_DIR=/usr \
     LOCAL_DIR=/usr/local \
@@ -77,6 +74,9 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     pip --default-timeout=100 install jupyterhub==1.0.0 pip==19.1.1 && \
     pip --default-timeout=100 install torch==1.3.0+cpu torchvision==0.4.1+cpu -f https://download.pytorch.org/whl/torch_stable.html && \
     toggleglobalsitepackages
+
+# support export PDF with chinese char
+RUN sed -i 's/\\documentclass\[11pt\]{article}/\\documentclass[11pt]{ctexart}/g' /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/nbconvert/templates/latex/article.tplx
 
 USER root
 
