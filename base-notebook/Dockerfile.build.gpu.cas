@@ -14,13 +14,16 @@ ADD nvidia-ml.list /etc/apt/sources.list.d/nvidia-ml.list
 RUN apt-get update && apt-get install -yq curl
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 # To change the datetime from UTC to Asia/Shanghai
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex \
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex texlive-generic-extra texlive-lang-cjk \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
 # After install node, python2 will be installed
 # move back python3 to be default python
 #RUN ln -snf /usr/bin/python3 /usr/bin/python
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# support export PDF with chinese char
+RUN sed -i 's/\\documentclass\[11pt\]{article}/\\documentclass[11pt]{ctexart}/g' /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/nbconvert/templates/latex/article.tplx
 
 # Configure environment
 ENV USR_DIR=/usr \
