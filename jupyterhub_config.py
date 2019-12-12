@@ -48,7 +48,7 @@ def encode(message):
 
 
 def decode(cipher):
-    obj2 = AES.new(AKEY, AES.MODE_CFB, iv)
+    obj2 = AES.new(AKEY.encode('utf-8'), AES.MODE_CFB, iv.encode('utf-8'))
     if not isinstance(cipher, str):
         cipher = cipher.encode("uft-8")
     return obj2.decrypt(base64.urlsafe_b64decode(cipher))
@@ -114,7 +114,7 @@ class MyKubeSpawner(KubeSpawner):
     @property
     def cmd(self):
         # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
-        return ['bash', '/home/jovyan/run.sh']
+        return ['bash', '/home/jovyan/run.sh', SERVER, self.user.name]
 
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels
@@ -154,37 +154,37 @@ class MyKubeSpawner(KubeSpawner):
             unescaped_servername=servername
         )
 
-    @staticmethod
-    def insert_envs(project_name):
-        """
-        add env to jupyterlab
-        :param tb_port:
-        :param project_name:
-        :return: dict of res json
-        """
-        return requests.put(f'{SERVER}/apps/insert_envs/{project_name}')
-
-    @staticmethod
-    def insert_dataset(project_name):
-        """
-        mount dataset
-        :param tb_port:
-        :param project_name:
-        :return: dict of res json
-        """
-        return requests.put(
-            f'{SERVER}/project/mount_all_dataset/{project_name}')
-
-    @staticmethod
-    def install_reset_req(project_name):
-        """
-        add env to jupyterlab
-        :param tb_port:
-        :param project_name:
-        :return: dict of res json
-        """
-        return requests.put(
-            f'{SERVER}/project/install_reset_req/{project_name}')
+    # @staticmethod
+    # def insert_envs(project_name):
+    #     """
+    #     add env to jupyterlab
+    #     :param tb_port:
+    #     :param project_name:
+    #     :return: dict of res json
+    #     """
+    #     return requests.put(f'{SERVER}/apps/insert_envs/{project_name}')
+    #
+    # @staticmethod
+    # def insert_dataset(project_name):
+    #     """
+    #     mount dataset
+    #     :param tb_port:
+    #     :param project_name:
+    #     :return: dict of res json
+    #     """
+    #     return requests.put(
+    #         f'{SERVER}/project/mount_all_dataset/{project_name}')
+    #
+    # @staticmethod
+    # def install_reset_req(project_name):
+    #     """
+    #     add env to jupyterlab
+    #     :param tb_port:
+    #     :param project_name:
+    #     :return: dict of res json
+    #     """
+    #     return requests.put(
+    #         f'{SERVER}/project/install_reset_req/{project_name}')
 
     @gen.coroutine
     def _start(self):
@@ -319,9 +319,9 @@ class MyKubeSpawner(KubeSpawner):
                 ),
             )
 
-        self.insert_envs(self.user.name)
-        self.install_reset_req(self.user.name)
-        self.insert_dataset(self.user.name)
+        # self.insert_envs(self.user.name)
+        # self.install_reset_req(self.user.name)
+        # self.insert_dataset(self.user.name)
 
         return (pod.status.pod_ip, self.port)
 

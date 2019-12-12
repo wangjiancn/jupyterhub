@@ -14,7 +14,7 @@ ADD nvidia-ml.list /etc/apt/sources.list.d/nvidia-ml.list
 RUN apt-get update && apt-get install -yq curl
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 # To change the datetime from UTC to Asia/Shanghai
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex \
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex texlive-generic-extra texlive-lang-cjk \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
 # After install node, python2 will be installed
 # move back python3 to be default python
@@ -78,6 +78,9 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     pip --default-timeout=100 install jupyterhub==1.0.0 pip==19.1.1 && \
     pip --default-timeout=100 install torch==1.3.0 torchvision==0.4.1 && \
     toggleglobalsitepackages
+
+# support export PDF with chinese char
+RUN sed -i 's/\\documentclass\[11pt\]{article}/\\documentclass[11pt]{ctexart}/g' /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/nbconvert/templates/latex/article.tplx
 
 USER root
 
