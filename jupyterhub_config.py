@@ -19,7 +19,7 @@ ENV = 'DEFAULT'
 # ENV = 'ZKY'
 # ENV = 'TEST'
 
-os.environ.get('ENV', ENV)
+ENV = os.environ.get('ENV', ENV)
 
 origin = '*'
 
