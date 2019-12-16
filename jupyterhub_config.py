@@ -4,12 +4,14 @@ import jwt
 from tornado import gen
 from jupyterhub.auth import Authenticator
 import hashlib
+import sentry_sdk
+from sentry_sdk.integrations.tornado import TornadoIntegration
 
 SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
-ENV = 'DEV'
+ENV = 'DEFAULT'
 # ENV = 'PROD'
 # ENV = 'MO'
 # ENV = 'ZJU'
@@ -21,16 +23,28 @@ origin = '*'
 
 if ENV == 'ZJU':
     SERVER = 'http://10.214.223.202:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 elif ENV == 'ZKY':
     SERVER = 'http://10.3.3.1:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 elif ENV == 'MO':
     SERVER = 'http://192.168.1.79:8899/pyapi'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 elif ENV == 'PROD':
     SERVER = 'http://192.168.31.11:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
 elif ENV == 'TEST':
     SERVER = 'http://192.168.31.89:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
 else:
     SERVER = 'http://localhost:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
+
+sentry_sdk.init(
+    environment=ENV,
+    dsn=SENTRY_DSN,
+    integrations=[TornadoIntegration()]
+)
 
 import base64
 from Crypto.Cipher import AES
@@ -1548,7 +1562,7 @@ c.KubeSpawner.uid = 1000
 c.KubeSpawner.gid = 100
 c.KubeSpawner.fs_gid = 100
 CLAIM_NAME = 'nfs-pvc-user-dir'
-if ENV == 'DEV':
+if ENV == 'DEFAULT':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
         # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
