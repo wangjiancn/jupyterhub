@@ -1,5 +1,5 @@
 # Configuration file for jupyterhub.
-
+import os
 import jwt
 from tornado import gen
 from jupyterhub.auth import Authenticator
@@ -18,6 +18,8 @@ ENV = 'DEFAULT'
 # ENV = 'LOCAL'
 # ENV = 'ZKY'
 # ENV = 'TEST'
+
+os.environ.get('ENV', ENV)
 
 origin = '*'
 
