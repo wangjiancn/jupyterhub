@@ -19,18 +19,6 @@ ENV = 'DEV'
 
 origin = '*'
 
-if ENV == 'ZJU':
-    SERVER = 'http://10.214.223.202:5005'
-elif ENV == 'ZKY':
-    SERVER = 'http://10.3.3.1:5005'
-elif ENV == 'MO':
-    SERVER = 'http://192.168.1.79:8899/pyapi'
-elif ENV == 'PROD':
-    SERVER = 'http://192.168.31.11:5005'
-elif ENV == 'TEST':
-    SERVER = 'http://192.168.31.89:5005'
-else:
-    SERVER = 'http://localhost:5005'
 
 import base64
 from Crypto.Cipher import AES
@@ -114,7 +102,7 @@ class MyKubeSpawner(KubeSpawner):
     @property
     def cmd(self):
         # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
-        return ['bash', '/home/jovyan/run.sh', SERVER, self.user.name]
+        return ['bash', '/home/jovyan/run.sh', self.user.name]
 
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels

@@ -7,13 +7,13 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 export WORKON_HOME=${WORK}
 
-PY_SERVER=${1}
-PROJECT_NAME=${2}
+PROJECT_NAME=${1}
 
 workon .localenv
 
 echo 'SYSTEM: mounting...'
-/home/jovyan/.virtualenvs/basenv/bin/python /home/jovyan/pod_funcs.py run_all ${PY_SERVER} ${PROJECT_NAME}
+
+/home/jovyan/.virtualenvs/basenv/bin/python /home/jovyan/pod_funcs.py run_all ${PROJECT_NAME}
 
 
 #echo 0 `date`
