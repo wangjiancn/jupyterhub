@@ -78,6 +78,9 @@ USER root
 ADD run.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run.sh
 
+ADD pod_funcs.py /home/jovyan/
+RUN chown -R jovyan:users /home/jovyan/pod_funcs.py
+
 ADD run_tb.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run_tb.sh
 
