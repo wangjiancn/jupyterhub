@@ -41,11 +41,8 @@ RUN groupadd wheel -g 11 && \
 ADD pip.conf /home/jovyan/.pip/pip.conf
 RUN chown -R jovyan:users /home/jovyan/.pip
 
-#ADD pyls /home/jovyan/pyls
-#RUN chown -R jovyan:users /home/jovyan/pyls
-
 ADD base_requirements.txt .
-RUN pip install -r base_requirements.txt
+RUN pip --default-timeout=100 install -r base_requirements.txt
 
 USER $NB_UID
 
@@ -56,8 +53,6 @@ RUN mkdir /home/$NB_USER/work && \
 ENV VIRTUALENVWRAPPER_PYTHON $USR_DIR/bin/python3
 ENV VIRTUALENVWRAPPER_VIRTUALENV $LOCAL_DIR/bin/virtualenv
 SHELL ["/bin/bash", "-c"]
-
-#RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 
 ADD requirements.txt .
 
@@ -82,6 +77,9 @@ USER root
 
 ADD run.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run.sh
+
+ADD pod_funcs.py /home/jovyan/
+RUN chown jovyan:users /home/jovyan/pod_funcs.py
 
 ADD run_tb.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run_tb.sh

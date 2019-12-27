@@ -133,7 +133,7 @@ class MyKubeSpawner(KubeSpawner):
     @property
     def cmd(self):
         # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
-        return ['bash', '/home/jovyan/run.sh', SERVER, self.user.name]
+        return ['bash', '/home/jovyan/run.sh', self.user.name]
 
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels
