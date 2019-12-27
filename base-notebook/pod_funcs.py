@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
 import sys
 import requests
+import os
 
 func_name = sys.argv[1]
-py_server = sys.argv[2]
-project_name = sys.argv[3]
+project_name = sys.argv[2]
+env = os.environ
+py_server = env['PY_SERVER']
 
 
 def insert_envs():
