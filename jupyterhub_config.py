@@ -38,6 +38,9 @@ elif ENV == 'PROD':
 elif ENV == 'TEST':
     SERVER = 'http://192.168.31.89:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
+elif ENV == 'BOX':
+    SERVER = 'http://192.168.31.104:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
 else:
     SERVER = 'http://localhost:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
@@ -308,7 +311,7 @@ class MyKubeSpawner(KubeSpawner):
                 'pod/%s did not start in %s seconds!' % (
                     self.pod_name, self.start_timeout),
                 timeout=self.start_timeout,
-            )
+                )
         except TimeoutError:
             if self.pod_name not in self.pod_reflector.pods:
                 # if pod never showed up at all,
@@ -1542,7 +1545,7 @@ c.Authenticator.admin_users = {'admin'}
 
 
 # dev
-if ENV in ['MO', 'ZJU', 'ZKY']:
+if ENV in ['MO', 'ZJU', 'ZKY', 'BOX']:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
@@ -1596,6 +1599,12 @@ elif ENV == 'TEST':
         'PY_SERVER': 'http://192.168.31.89:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
+elif ENV == 'BOX':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://192.168.31.104:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+
 c.KubeSpawner.extra_container_config = {
     'ports': [
         {
