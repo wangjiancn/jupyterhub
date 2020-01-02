@@ -20,10 +20,10 @@ ADD mnist.py $HOME
 RUN chown jovyan:users $HOME/mnist.py
 
 # insert localenv path
-ENV ENV_PATH=${HOME}/.virtualenvs/jlenv
+ENV ENV_PATH=${HOME}/.virtualenvs/basenv
 ENV path_file=${ENV_PATH}/lib/python3.5/site-packages/_virtualenv_path_extensions.pth
 RUN echo "import sys; sys.__plen = len(sys.path)" > "$path_file"
-RUN echo ${HOME}/.virtualenvs/basenv/lib/python3.5/site-packages >> "$path_file"
+RUN echo ${HOME}/.virtualenvs/jlenv/lib/python3.5/site-packages >> "$path_file"
 RUN echo ${WORK}/.localenv/lib/python3.5/site-packages >> "$path_file"
 RUN echo "import sys; new=sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p=getattr(sys,'__egginsert',0); sys.path[p:p]=new; sys.__egginsert = p+len(new)" >> "$path_file"
 

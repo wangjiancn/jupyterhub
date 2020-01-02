@@ -27,9 +27,9 @@ VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
 source /usr/local/bin/virtualenvwrapper.sh
 
-ENV_PATH=/home/jovyan/.virtualenvs/${JOB_ID}
+ENV_PATH=/home/jovyan/.virtualenvs/basenv
 
-workon jlenv
+workon basenv
 
 #add2virtualenv ${HOME}/.virtualenvs/basenv/lib/python3.5/site-packages
 #add2virtualenv ${WORK}/.localenv/lib/python3.5/site-packages

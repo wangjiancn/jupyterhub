@@ -10,9 +10,9 @@ VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
 source /usr/local/bin/virtualenvwrapper.sh
 
-ENV_PATH=/home/jovyan/.virtualenvs/jlenv
+ENV_PATH=/home/jovyan/.virtualenvs/basenv
 
-workon jlenv
+workon basenv
 
 if [ ! -f ${WORK}/${SCRIPT} ] ; then
     echo script path ${WORK}/${SCRIPT} not exists
