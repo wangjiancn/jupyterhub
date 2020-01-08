@@ -38,8 +38,7 @@ RUN groupadd wheel -g 11 && \
     fix-permissions $HOME && \
     fix-permissions $LOCAL_DIR
 
-ADD pip.conf /home/jovyan/.pip/pip.conf
-RUN chown -R jovyan:users /home/jovyan/.pip
+
 
 ADD base_requirements.txt .
 RUN pip --default-timeout=100 install -r base_requirements.txt
@@ -76,6 +75,9 @@ RUN sed -i 's/\\documentclass\[11pt\]{article}/\\documentclass[11pt]{ctexart}/g'
 
 USER root
 
+ADD pip.conf /home/jovyan/.pip/pip.conf
+RUN chown -R jovyan:users /home/jovyan/.pip
+
 ADD SimHei.ttf .
 RUN chown jovyan:users /SimHei.ttf
 RUN mv SimHei.ttf /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/matplotlib/mpl-data/fonts/ttf
@@ -85,7 +87,7 @@ ADD run.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run.sh
 
 ADD pod_funcs.py /home/jovyan/
-RUN chown jovyan:users /home/jovyan/pod_funcs.py
+#RUN chown jovyan:users /home/jovyan/pod_funcs.py
 
 ADD run_tb.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run_tb.sh
