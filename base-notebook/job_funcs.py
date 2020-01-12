@@ -3,8 +3,8 @@ import os
 import sys
 import requests
 
-PY_SERVER = os.environ.get('PY_SERVER')
-USER_TOKEN = os.environ.get('USER_TOKEN')
+PY_SERVER = os.environ.get('PY_SERVER', '')
+USER_TOKEN = os.environ.get('USER_TOKEN', '')
 
 func_name = sys.argv[1]
 job_id = sys.argv[2]
