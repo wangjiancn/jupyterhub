@@ -70,13 +70,22 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     pip --default-timeout=100 install torch==1.3.0+cpu torchvision==0.4.1+cpu -f https://download.pytorch.org/whl/torch_stable.html && \
     toggleglobalsitepackages
 
+
 # support export PDF with chinese char
 RUN sed -i 's/\\documentclass\[11pt\]{article}/\\documentclass[11pt]{ctexart}/g' /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/nbconvert/templates/latex/article.tplx
 
 USER root
 
+ADD SimHei.ttf .
+RUN chown jovyan:users /SimHei.ttf
+RUN mv SimHei.ttf /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/matplotlib/mpl-data/fonts/ttf
+RUN echo 'font.sans-serif: SimHei' >> /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/matplotlib/mpl-data/matplotlibrc
+
 ADD run.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run.sh
+
+ADD pod_funcs.py /home/jovyan/
+RUN chown jovyan:users /home/jovyan/pod_funcs.py
 
 ADD run_tb.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run_tb.sh

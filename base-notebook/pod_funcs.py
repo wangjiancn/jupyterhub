@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
 import sys
 import requests
+import os
 
 func_name = sys.argv[1]
-py_server = sys.argv[2]
-project_name = sys.argv[3]
+project_name = sys.argv[2]
+env = os.environ
+py_server = env['PY_SERVER']
 
 
 def insert_envs():
@@ -14,7 +16,9 @@ def insert_envs():
     :param project_name:
     :return: dict of res json
     """
-    return requests.put(f'{py_server}/apps/insert_envs/{project_name}')
+    return requests.put('{py_server}/apps/insert_envs/{project_name}'.format(
+        py_server=py_server,
+        project_name=project_name))
 
 
 def insert_dataset():
@@ -25,7 +29,9 @@ def insert_dataset():
     :return: dict of res json
     """
     return requests.put(
-        f'{py_server}/project/mount_all_dataset/{project_name}')
+        '{py_server}/project/mount_all_dataset/{project_name}'.format(
+            py_server=py_server,
+            project_name=project_name))
 
 
 def install_reset_req():
@@ -36,7 +42,9 @@ def install_reset_req():
     :return: dict of res json
     """
     return requests.put(
-        f'{py_server}/project/install_reset_req/{project_name}')
+        '{py_server}/project/install_reset_req/{project_name}'.format(
+            py_server=py_server,
+            project_name=project_name))
 
 
 def run_all():

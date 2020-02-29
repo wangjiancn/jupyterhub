@@ -1,15 +1,17 @@
 # Configuration file for jupyterhub.
-
+import os
 import jwt
 from tornado import gen
 from jupyterhub.auth import Authenticator
 import hashlib
+import sentry_sdk
+from sentry_sdk.integrations.tornado import TornadoIntegration
 
 SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
 IDENTITY = 'identity'
 
-ENV = 'DEV'
+ENV = 'DEFAULT'
 # ENV = 'PROD'
 # ENV = 'MO'
 # ENV = 'ZJU'
@@ -17,20 +19,37 @@ ENV = 'DEV'
 # ENV = 'ZKY'
 # ENV = 'TEST'
 
+ENV = os.environ.get('ENV', ENV)
+
 origin = '*'
 
 if ENV == 'ZJU':
     SERVER = 'http://10.214.223.202:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 elif ENV == 'ZKY':
     SERVER = 'http://10.3.3.1:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 elif ENV == 'MO':
     SERVER = 'http://192.168.1.79:8899/pyapi'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 elif ENV == 'PROD':
     SERVER = 'http://192.168.31.11:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
 elif ENV == 'TEST':
     SERVER = 'http://192.168.31.89:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
+elif ENV == 'BOX':
+    SERVER = 'http://192.168.31.104:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
 else:
     SERVER = 'http://localhost:5005'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
+
+sentry_sdk.init(
+    environment=ENV,
+    dsn=SENTRY_DSN,
+    integrations=[TornadoIntegration()]
+)
 
 import base64
 from Crypto.Cipher import AES
@@ -114,7 +133,7 @@ class MyKubeSpawner(KubeSpawner):
     @property
     def cmd(self):
         # return ['bash', '/home/jovyan/run.sh', str(self.user.id)]
-        return ['bash', '/home/jovyan/run.sh', SERVER, self.user.name]
+        return ['bash', '/home/jovyan/run.sh', self.user.name]
 
     def _expand_user_properties(self, template):
         # Make sure username and servername match the restrictions for DNS labels
@@ -292,7 +311,7 @@ class MyKubeSpawner(KubeSpawner):
                 'pod/%s did not start in %s seconds!' % (
                     self.pod_name, self.start_timeout),
                 timeout=self.start_timeout,
-            )
+                )
         except TimeoutError:
             if self.pod_name not in self.pod_reflector.pods:
                 # if pod never showed up at all,
@@ -1526,7 +1545,7 @@ c.Authenticator.admin_users = {'admin'}
 
 
 # dev
-if ENV in ['MO', 'ZJU', 'ZKY']:
+if ENV in ['MO', 'ZJU', 'ZKY', 'BOX']:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
@@ -1548,7 +1567,7 @@ c.KubeSpawner.uid = 1000
 c.KubeSpawner.gid = 100
 c.KubeSpawner.fs_gid = 100
 CLAIM_NAME = 'nfs-pvc-user-dir'
-if ENV == 'DEV':
+if ENV == 'DEFAULT':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip=public_ips()[0])
         # 'PY_SERVER': 'http://{ip}:8899/pyapi'.format(ip='192.168.32.3')  # upstairs ip
@@ -1580,6 +1599,12 @@ elif ENV == 'TEST':
         'PY_SERVER': 'http://192.168.31.89:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
+elif ENV == 'BOX':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://192.168.31.104:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+
 c.KubeSpawner.extra_container_config = {
     'ports': [
         {

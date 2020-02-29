@@ -82,6 +82,11 @@ RUN sed -i 's/\\documentclass\[11pt\]{article}/\\documentclass[11pt]{ctexart}/g'
 
 USER root
 
+ADD SimHei.ttf .
+RUN chown jovyan:users /SimHei.ttf
+RUN mv SimHei.ttf /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/matplotlib/mpl-data/fonts/ttf
+RUN echo 'font.sans-serif: SimHei' >> /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/matplotlib/mpl-data/matplotlibrc
+
 ADD run.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run.sh
 
