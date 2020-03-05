@@ -17,3 +17,5 @@ numpy==1.16
 ipywidgets==7.4
 func-timeout
 graphviz
+tensorboardX
+ipdb
