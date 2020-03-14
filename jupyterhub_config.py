@@ -1548,7 +1548,7 @@ c.Authenticator.admin_users = {'admin'}
 
 
 # dev
-if ENV in ['MO', 'ZJU', 'ZKY', 'BOX']:
+if ENV in ['MO', 'ZJU', 'ZKY', 'BOX', 'ZJUNEW']:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
