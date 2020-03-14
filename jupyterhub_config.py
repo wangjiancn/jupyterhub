@@ -41,6 +41,9 @@ elif ENV == 'TEST':
 elif ENV == 'BOX':
     SERVER = 'http://192.168.31.104:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
+elif ENV == 'ZJUNEW':
+    SERVER = 'http://10.200.11.138:8899/pyapi'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
 else:
     SERVER = 'http://localhost:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
@@ -1602,6 +1605,11 @@ elif ENV == 'TEST':
 elif ENV == 'BOX':
     c.KubeSpawner.environment = {
         'PY_SERVER': 'http://192.168.31.104:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
+elif ENV == 'ZJUNEW':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://10.200.11.138:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
 
