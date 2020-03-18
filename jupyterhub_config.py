@@ -1648,7 +1648,7 @@ c.KubeSpawner.extra_pod_config = {
     'hostname': 'notebook',
 }
 
-if ENV in ['MO']:
+if ENV in ['MO', 'ZJUNEW']:
     c.KubeSpawner.extra_pod_config['nodeSelector'] = {
         # run notebooks on cpu nodes
         'accelerator': 'non-gpu'
