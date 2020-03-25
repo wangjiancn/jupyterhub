@@ -31,7 +31,7 @@ elif ENV == 'ZKY':
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 elif ENV == 'MO':
     SERVER = 'http://192.168.1.79:8899/pyapi'
-    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@192.168.1.27:9900/7'
 elif ENV == 'PROD':
     SERVER = 'http://192.168.31.11:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
@@ -43,7 +43,7 @@ elif ENV == 'BOX':
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
 elif ENV == 'ZJUNEW':
     SERVER = 'http://10.200.11.138:8899/pyapi'
-    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 else:
     SERVER = 'http://localhost:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
