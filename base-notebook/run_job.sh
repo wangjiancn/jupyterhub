@@ -6,6 +6,7 @@ SCRIPT=${2}
 RUN_FUNC=${3}
 TASK_ID=${4}
 ARGS=${5}
+TIMEOUT=${6}
 
 echo 'SYSTEM: Preparing env...'
 
@@ -27,7 +28,7 @@ ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py insert_module ${JOB_ID}
 
 echo 'SYSTEM: Running...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py start_job ${JOB_ID}
-${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC} ${TASK_ID} ${ARGS}
+/usr/bin/timeout ${TIMEOUT} ${ENV_PATH}/bin/python ${SCRIPT} ${RUN_FUNC} ${TASK_ID} ${ARGS}
 SUCCESS=$?
 echo 'SYSTEM: Finishing...'
 ${ENV_PATH}/bin/python /home/jovyan/job_funcs.py finish_job ${JOB_ID} ${SUCCESS}
