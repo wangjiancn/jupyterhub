@@ -83,7 +83,7 @@ class SuperSecureAuthenticator(Authenticator):
         unhash_name = decode(tmp_username).decode('utf-8').split('+')[0]
         # decode token:
         token_data = jwt.decode(data['password'], SECRET, algorithms=[
-            ALGORITHM])
+            ALGORITHM], leeway=10)
         # print(tmp_username, unhash_name, token_data[IDENTITY])
         if token_data[IDENTITY] == unhash_name:
             # if token_data[IDENTITY] == 'zhaofengli':
