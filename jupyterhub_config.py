@@ -18,6 +18,7 @@ ENV = 'DEFAULT'
 # ENV = 'LOCAL'
 # ENV = 'ZKY'
 # ENV = 'TEST'
+# ENV = 'ZJUNEW'
 
 ENV = os.environ.get('ENV', ENV)
 
