@@ -1638,8 +1638,8 @@ c.KubeSpawner.extra_container_config = {
             'memory': '4096Mi'
         },
         'requests': {
-            'cpu': '200m',
-            'memory': '500Mi'
+            'cpu': '100m',
+            'memory': '400Mi'
         }
     }
 }
