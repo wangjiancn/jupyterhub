@@ -9,7 +9,12 @@ ADD run_pyls.sh /home/jovyan
 RUN chown jovyan:users /home/jovyan/run_pyls.sh
 
 
-USER jovyan
+USER $NB_UID
+
+RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
+    mkvirtualenv jlenv && \
+    workon jlenv && \
+    pip install python-language-server[all]
 
 RUN cd /home/jovyan/pyls && npm i && npm run build && cd -
 

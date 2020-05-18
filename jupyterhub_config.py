@@ -18,6 +18,7 @@ ENV = 'DEFAULT'
 # ENV = 'LOCAL'
 # ENV = 'ZKY'
 # ENV = 'TEST'
+# ENV = 'ZJUNEW'
 
 ENV = os.environ.get('ENV', ENV)
 
@@ -31,7 +32,7 @@ elif ENV == 'ZKY':
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 elif ENV == 'MO':
     SERVER = 'http://192.168.1.79:8899/pyapi'
-    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@192.168.1.27:9900/7'
 elif ENV == 'PROD':
     SERVER = 'http://192.168.31.11:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
@@ -41,6 +42,9 @@ elif ENV == 'TEST':
 elif ENV == 'BOX':
     SERVER = 'http://192.168.31.104:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
+elif ENV == 'ZJUNEW':
+    SERVER = 'http://10.200.11.138:8899/pyapi'
+    SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@sentry.momodel.cn:9900/7'
 else:
     SERVER = 'http://localhost:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
@@ -80,7 +84,7 @@ class SuperSecureAuthenticator(Authenticator):
         unhash_name = decode(tmp_username).decode('utf-8').split('+')[0]
         # decode token:
         token_data = jwt.decode(data['password'], SECRET, algorithms=[
-            ALGORITHM])
+            ALGORITHM], leeway=10)
         # print(tmp_username, unhash_name, token_data[IDENTITY])
         if token_data[IDENTITY] == unhash_name:
             # if token_data[IDENTITY] == 'zhaofengli':
@@ -1545,7 +1549,7 @@ c.Authenticator.admin_users = {'admin'}
 
 
 # dev
-if ENV in ['MO', 'ZJU', 'ZKY', 'BOX']:
+if ENV in ['MO', 'ZJU', 'ZKY', 'BOX', 'ZJUNEW']:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
 else:
     c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
@@ -1604,6 +1608,11 @@ elif ENV == 'BOX':
         'PY_SERVER': 'http://192.168.31.104:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
+elif ENV == 'ZJUNEW':
+    c.KubeSpawner.environment = {
+        'PY_SERVER': 'http://10.200.11.138:8899/pyapi'
+    }
+    USER_DIRECTORY = 'user_directory'
 
 c.KubeSpawner.extra_container_config = {
     'ports': [
@@ -1625,12 +1634,12 @@ c.KubeSpawner.extra_container_config = {
     # },
     'resources': {
         'limits': {
-            'cpu': '1',
-            'memory': '4Gi'
+            'cpu': '1000m',
+            'memory': '4096Mi'
         },
         'requests': {
-            'cpu': '0.2',
-            'memory': '500Mi'
+            'cpu': '100m',
+            'memory': '400Mi'
         }
     }
 }
@@ -1640,7 +1649,7 @@ c.KubeSpawner.extra_pod_config = {
     'hostname': 'notebook',
 }
 
-if ENV in ['MO']:
+if ENV in ['MO', 'ZJUNEW']:
     c.KubeSpawner.extra_pod_config['nodeSelector'] = {
         # run notebooks on cpu nodes
         'accelerator': 'non-gpu'
