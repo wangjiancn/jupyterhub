@@ -82,31 +82,16 @@ RUN mv SimHei.ttf /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/m
 RUN echo 'font.sans-serif: SimHei' >> /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/matplotlib/mpl-data/matplotlibrc
 
 ADD run.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/run.sh
-
 ADD pod_funcs.py /home/jovyan/
-RUN chown jovyan:users /home/jovyan/pod_funcs.py
-
 ADD run_tb.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/run_tb.sh
-
 ADD add_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/add_venv.sh
-
 ADD install_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/install_venv.sh
-
 ADD remove_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/remove_venv.sh
-
 ADD freeze_venv.sh /home/jovyan
-RUN chown jovyan:users /home/jovyan/freeze_venv.sh
-
 ADD modules /home/jovyan/modules
-RUN chown -R jovyan:users /home/jovyan/modules
-
 ADD dataset /home/jovyan/dataset
-RUN chown -R jovyan:users /home/jovyan/dataset
+
+RUN chown -R jovyan:users /home/jovyan/
 
 USER $NB_UID
 
