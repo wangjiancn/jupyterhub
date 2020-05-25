@@ -34,7 +34,7 @@ elif ENV == 'MO':
     SERVER = 'http://192.168.1.79:8899/pyapi'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@192.168.1.27:9900/7'
 elif ENV == 'PROD':
-    SERVER = 'http://192.168.31.11:5005'
+    SERVER = 'http://m-model:5005'
     SENTRY_DSN = 'http://941eb6c899504cea8ecbcb4ddd251f64@test.local.momodel.cn:9000/7'
 elif ENV == 'TEST':
     SERVER = 'http://192.168.31.89:5005'
@@ -1580,7 +1580,7 @@ if ENV == 'DEFAULT':
     USER_DIRECTORY = 'user_directory_dev'
 elif ENV == 'PROD':
     c.KubeSpawner.environment = {
-        'PY_SERVER': 'http://192.168.31.11:8899/pyapi'
+        'PY_SERVER': 'http://m-model:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
 elif ENV == 'MO':
