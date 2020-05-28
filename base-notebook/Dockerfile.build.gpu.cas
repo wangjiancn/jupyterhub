@@ -112,7 +112,7 @@ RUN echo $'\n\
 function 7zx { \n\
     LC_ALL=C 7z x $1 -aoa \n\
     convmv -f GBK -t utf8 --notest -r . \n\
-} \n\' > $HOME/.bashrc
+}' > $HOME/.bashrc
 
 EXPOSE 8888
 WORKDIR $HOME/input/work

@@ -97,11 +97,11 @@ RUN chown -R jovyan:users /home/jovyan/
 USER $NB_UID
 
 # add 7z extract function with GBK conversion
-RUN echo $'\n\
+RUN echo $' \n\
 function 7zx { \n\
     LC_ALL=C 7z x $1 -aoa \n\
     convmv -f GBK -t utf8 --notest -r . \n\
-} \n\' > $HOME/.bashrc
+}' >> $HOME/.bashrc
 
 EXPOSE 8888
 WORKDIR /home/$NB_USER/work
