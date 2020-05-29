@@ -7,7 +7,8 @@ USER root
 RUN apt-get update && apt-get install -yq curl
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 # To change the datetime from UTC to Asia/Shanghai
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -yq graphviz tzdata nano vim wget git python3-tk nodejs pandoc texlive-xetex texlive-generic-extra texlive-lang-cjk \
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -yq graphviz tzdata nano vim wget git \
+python3-tk nodejs pandoc texlive-xetex texlive-generic-extra texlive-lang-cjk convmv p7zip-full \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
 # After install node, python2 will be installed
 # move back python3 to be default python
@@ -94,6 +95,18 @@ ADD dataset /home/jovyan/dataset
 RUN chown -R jovyan:users /home/jovyan/
 
 USER $NB_UID
+
+# add 7z extract function with GBK conversion
+RUN echo $' \n\
+function 7zx { \n\
+    if [[ ! -z $2 ]] ; then \n\
+        LC_ALL=C 7z x $1 -aoa -o$2 \n\
+        convmv -f GBK -t utf8 --notest -r $2 \n\
+    else \n\
+        LC_ALL=C 7z x $1 -aoa \n\
+        convmv -f GBK -t utf8 --notest -r . \n\
+    fi \n\
+}' >> $HOME/.bashrc
 
 EXPOSE 8888
 WORKDIR /home/$NB_USER/work
