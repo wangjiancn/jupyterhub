@@ -58,12 +58,12 @@ SHELL ["/bin/bash", "-c"]
 ADD requirements.txt .
 
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
-    mkvirtualenv jlenv --system-site-packages && \
+    mkvirtualenv --system-site-packages jlenv && \
     workon jlenv && \
     pip --default-timeout=100 install pip==19.1.1 jupyterlab==1.0.0a1 -i https://pypi.python.org/simple && \
     toggleglobalsitepackages && \
     #make basenv
-    mkvirtualenv basenv --system-site-packages && \
+    mkvirtualenv --system-site-packages basenv && \
     workon basenv && \
     pip --default-timeout=100 install -U opencv-python nltk notebook seaborn keras Cython && \
     pip --default-timeout=100 install -r requirements.txt && \

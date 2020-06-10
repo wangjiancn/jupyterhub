@@ -21,7 +21,7 @@ echo 'SYSTEM: mounting...'
 #    virtualenv-clone /home/jovyan/.virtualenvs/jlenv ${WORK}/.localenv
 #fi
 #echo 1 `date`
-##mkvirtualenv .localenv --system-site-packages
+##mkvirtualenv --system-site-packages .localenv
 #workon .localenv
 #echo 2 `date`
 #
