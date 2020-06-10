@@ -12,7 +12,7 @@ RUN chown jovyan:users /home/jovyan/run_pyls.sh
 USER $NB_UID
 
 RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
-    mkvirtualenv jlenv && \
+    mkvirtualenv jlenv --system-site-packages && \
     workon jlenv && \
     pip install python-language-server[all]
 

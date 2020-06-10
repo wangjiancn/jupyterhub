@@ -18,7 +18,7 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 # create module env
 export WORKON_HOME=${M_DIR}
-#mkvirtualenv .localenv
+#mkvirtualenv .localenv --system-site-packages
 workon .localenv
 # install packages
 pip install -r ${REQ_TXT}
