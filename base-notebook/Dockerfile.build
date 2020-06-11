@@ -39,9 +39,6 @@ RUN groupadd wheel -g 11 && \
     fix-permissions $HOME && \
     fix-permissions $LOCAL_DIR
 
-ADD pip.conf /home/jovyan/.pip/pip.conf
-RUN chown -R jovyan:users /home/jovyan/.pip
-
 ADD base_requirements.txt .
 RUN pip --default-timeout=100 install -r base_requirements.txt
 
@@ -69,6 +66,8 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
     pip --default-timeout=100 install jupyterhub==1.0.0 pip==19.1.1 && \
     pip --default-timeout=100 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
+ADD pip.conf /home/jovyan/.pip/pip.conf
+RUN chown -R jovyan:users /home/jovyan/.pip
 
 # support export PDF with chinese char
 RUN sed -i 's/\\documentclass\[11pt\]{article}/\\documentclass[11pt]{ctexart}/g' /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages/nbconvert/templates/latex/article.tplx
