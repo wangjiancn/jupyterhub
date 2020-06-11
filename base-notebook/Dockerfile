@@ -61,15 +61,13 @@ RUN source $LOCAL_DIR/bin/virtualenvwrapper.sh && \
 #    mkvirtualenv --system-site-packages jlenv && \
 #    workon jlenv && \
 #    pip --default-timeout=100 install jupyterlab==0.31.1 'python-language-server[all]' && \
-#    toggleglobalsitepackages && \
     #make basenv
     mkvirtualenv --system-site-packages basenv && \
     workon basenv && \
     pip --default-timeout=100 install -U opencv-python nltk notebook seaborn keras Cython && \
     pip --default-timeout=100 install -r requirements.txt && \
     pip --default-timeout=100 install jupyterhub==1.0.0 pip==19.1.1 && \
-    pip --default-timeout=100 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html && \
-    toggleglobalsitepackages
+    pip --default-timeout=100 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
 
 # support export PDF with chinese char
