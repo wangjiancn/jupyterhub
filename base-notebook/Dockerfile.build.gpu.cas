@@ -85,8 +85,8 @@ RUN chown -R jovyan:users /home/jovyan/.pip
 
 ADD SimHei.ttf .
 RUN chown jovyan:users /SimHei.ttf
-RUN mv SimHei.ttf $HOME/.virtualenvs/basenv/lib/python3.5/site-packages/matplotlib/mpl-data/fonts/ttf
-RUN echo 'font.sans-serif: SimHei' >> $HOME/.virtualenvs/basenv/lib/python3.5/site-packages/matplotlib/mpl-data/matplotlibrc
+RUN mv SimHei.ttf /usr/local/lib/python3.5/dist-packages/matplotlib/mpl-data/fonts/ttf
+RUN echo 'font.sans-serif: SimHei' >> /usr/local/lib/python3.5/dist-packages/matplotlib/mpl-data/matplotlibrc
 
 ADD run.sh $HOME
 ADD pod_funcs.py $HOME
