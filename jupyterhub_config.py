@@ -1,11 +1,11 @@
 # Configuration file for jupyterhub.
 import os
+
 import jwt
-from tornado import gen
-from jupyterhub.auth import Authenticator
-import hashlib
 import sentry_sdk
+from jupyterhub.auth import Authenticator
 from sentry_sdk.integrations.tornado import TornadoIntegration
+from tornado import gen
 
 SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
@@ -110,13 +110,9 @@ import sys
 import string
 
 from kubespawner import KubeSpawner
-from traitlets import default
 from kubernetes.client.rest import ApiException
 from jupyterhub.utils import exponential_backoff
 import escapism
-
-import jupyterhub
-import requests
 
 
 class MyKubeSpawner(KubeSpawner):
@@ -764,8 +760,6 @@ class MyProxy(ConfigurableHTTPProxy):
             }
         )
 
-
-from jupyterhub.handlers.base import PrefixRedirectHandler
 
 # c.JupyterHub.init_handlers =
 # ------------------------------------------------------------------------------
@@ -1585,7 +1579,7 @@ elif ENV == 'PROD':
     USER_DIRECTORY = 'user_directory'
 elif ENV == 'MO':
     c.KubeSpawner.environment = {
-        'PY_SERVER': 'http://36.26.77.39:8899/pyapi'
+        'PY_SERVER': 'https://momodel.cn/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
 elif ENV == 'ZJU':
