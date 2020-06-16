@@ -1579,7 +1579,7 @@ elif ENV == 'PROD':
     USER_DIRECTORY = 'user_directory'
 elif ENV == 'MO':
     c.KubeSpawner.environment = {
-        'PY_SERVER': 'https://momodel.cn/pyapi'
+        'PY_SERVER': 'http://192.168.1.79:8899/pyapi'
     }
     USER_DIRECTORY = 'user_directory'
 elif ENV == 'ZJU':
