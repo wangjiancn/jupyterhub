@@ -109,7 +109,7 @@ RUN echo $' \n\
 function 7zx { \n\
     if [[ ! -z $2 ]] ; then \n\
         LC_ALL=C 7z x $1 -aoa -o$2 \n\
-        convmv -f GBK -t utf8 --notest -r $2 \n\
+        convmv -f GBK -t utf8 --notest -r $2\. \n\
     else \n\
         LC_ALL=C 7z x $1 -aoa \n\
         convmv -f GBK -t utf8 --notest -r . \n\
