@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:1.13.1-py3
+FROM tensorflow/tensorflow:2.2.0
 
 LABEL maintainer="Mo Model Team"
 
