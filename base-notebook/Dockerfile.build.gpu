@@ -86,15 +86,17 @@ RUN chown jovyan:users /SimHei.ttf
 RUN mv SimHei.ttf /usr/local/lib/python3.6/dist-packages/matplotlib/mpl-data/fonts/ttf
 RUN echo 'font.sans-serif: SimHei' >> /usr/local/lib/python3.6/dist-packages/matplotlib/mpl-data/matplotlibrc
 
-ADD run.sh /home/jovyan
-ADD pod_funcs.py /home/jovyan/
-ADD run_tb.sh /home/jovyan
-ADD add_venv.sh /home/jovyan
-ADD install_venv.sh /home/jovyan
-ADD remove_venv.sh /home/jovyan
-ADD freeze_venv.sh /home/jovyan
-ADD modules /home/jovyan/modules
-ADD dataset /home/jovyan/dataset
+ADD run.sh $HOME
+ADD pod_funcs.py $HOME
+ADD run_tb.sh $HOME
+ADD add_venv.sh $HOME
+ADD install_venv.sh $HOME
+ADD remove_venv.sh $HOME
+ADD freeze_venv.sh $HOME
+ADD modules $HOME/modules
+ADD dataset $HOME/dataset
+ADD build.sh $HOME
+ADD update_jl.sh $HOME
 
 RUN chown -R jovyan:users /home/jovyan/
 
