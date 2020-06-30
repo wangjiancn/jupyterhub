@@ -31,8 +31,8 @@ ENV_PATH=/home/jovyan/.virtualenvs/basenv
 
 workon basenv
 
-#add2virtualenv ${HOME}/.virtualenvs/basenv/lib/python3.5/site-packages
-#add2virtualenv ${WORK}/.localenv/lib/python3.5/site-packages
+#add2virtualenv ${HOME}/.virtualenvs/basenv/lib/python3.6/site-packages
+#add2virtualenv ${WORK}/.localenv/lib/python3.6/site-packages
 
 if [ ! -f ${WORK}/${SCRIPT} ] ; then
     echo script path ${WORK}/${SCRIPT} not exists

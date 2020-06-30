@@ -3,7 +3,7 @@ M_DIR=/home/jovyan/modules/${1}
 JOB_ID=${2}
 WORK=/home/jovyan/work
 HOME=/home/jovyan
-PACKAGE_DIR=${M_DIR}/.localenv/lib/python3.5/site-packages
+PACKAGE_DIR=${M_DIR}/.localenv/lib/python3.6/site-packages
 
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
@@ -17,13 +17,13 @@ fi
 if [ ${JOB_ID} ] ; then
     echo "activating env"
     workon ${JOB_ID}
-    path_file=${HOME}/.virtualenvs/${JOB_ID}/lib/python3.5/site-packages/_virtualenv_path_extensions.pth
+    path_file=${HOME}/.virtualenvs/${JOB_ID}/lib/python3.6/site-packages/_virtualenv_path_extensions.pth
 
 else
     export WORKON_HOME=${WORK}
     echo "activating env"
     workon .localenv
-    path_file=${WORK}/.localenv/lib/python3.5/site-packages/_virtualenv_path_extensions.pth
+    path_file=${WORK}/.localenv/lib/python3.6/site-packages/_virtualenv_path_extensions.pth
 
 fi
 

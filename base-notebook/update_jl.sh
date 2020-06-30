@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # script to build '.localenv'
 export WORK=/home/jovyan/work
-export path_file=${WORK}/.localenv/lib/python3.5/site-packages/_virtualenv_path_extensions.pth
+export path_file=${WORK}/.localenv/lib/python3.6/site-packages/_virtualenv_path_extensions.pth
 
 export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv

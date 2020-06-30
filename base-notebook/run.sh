@@ -25,7 +25,7 @@ echo 'SYSTEM: mounting...'
 #workon .localenv
 #echo 2 `date`
 #
-#add2virtualenv /home/jovyan/.virtualenvs/basenv/lib/python3.5/site-packages
+#add2virtualenv /home/jovyan/.virtualenvs/basenv/lib/python3.6/site-packages
 
 #echo 3 `date`
 

@@ -7,7 +7,7 @@ WORKDIR $HOME/input/work
 
 USER root
 
-ADD sc.py /usr/lib/python3.5/sitecustomize.py
+ADD sc.py /usr/lib/python3.6/sitecustomize.py
 
 ADD run_job_cas.sh $HOME
 RUN mv $HOME/run_job_cas.sh $HOME/run_job.sh
@@ -21,10 +21,10 @@ RUN chown jovyan:users $HOME/mnist.py
 
 # insert localenv path
 ENV ENV_PATH=${HOME}/.virtualenvs/basenv
-ENV path_file=${ENV_PATH}/lib/python3.5/site-packages/_virtualenv_path_extensions.pth
+ENV path_file=${ENV_PATH}/lib/python3.6/site-packages/_virtualenv_path_extensions.pth
 RUN echo "import sys; sys.__plen = len(sys.path)" > "$path_file"
-RUN echo ${HOME}/.virtualenvs/jlenv/lib/python3.5/site-packages >> "$path_file"
-RUN echo ${WORK}/.localenv/lib/python3.5/site-packages >> "$path_file"
+RUN echo ${HOME}/.virtualenvs/jlenv/lib/python3.6/site-packages >> "$path_file"
+RUN echo ${WORK}/.localenv/lib/python3.6/site-packages >> "$path_file"
 RUN echo "import sys; new=sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p=getattr(sys,'__egginsert',0); sys.path[p:p]=new; sys.__egginsert = p+len(new)" >> "$path_file"
 
 CMD ['bash', '/mnt/run_job.sh']
