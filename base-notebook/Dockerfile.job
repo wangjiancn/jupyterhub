@@ -1,4 +1,4 @@
-FROM magicalion/singleuser:tf2-build
+FROM magicalion/singleuser:tf115-build
 
 USER $NB_UID
 
