@@ -1,11 +1,11 @@
 # Configuration file for jupyterhub.
 import os
+
 import jwt
-from tornado import gen
-from jupyterhub.auth import Authenticator
-import hashlib
 import sentry_sdk
+from jupyterhub.auth import Authenticator
 from sentry_sdk.integrations.tornado import TornadoIntegration
+from tornado import gen
 
 SECRET = 'super-super-secret'
 ALGORITHM = 'HS256'
@@ -110,13 +110,9 @@ import sys
 import string
 
 from kubespawner import KubeSpawner
-from traitlets import default
 from kubernetes.client.rest import ApiException
 from jupyterhub.utils import exponential_backoff
 import escapism
-
-import jupyterhub
-import requests
 
 
 class MyKubeSpawner(KubeSpawner):
@@ -764,8 +760,6 @@ class MyProxy(ConfigurableHTTPProxy):
             }
         )
 
-
-from jupyterhub.handlers.base import PrefixRedirectHandler
 
 # c.JupyterHub.init_handlers =
 # ------------------------------------------------------------------------------
@@ -1550,9 +1544,9 @@ c.Authenticator.admin_users = {'admin'}
 
 # dev
 if ENV in ['MO', 'ZJU', 'ZKY', 'BOX', 'ZJUNEW']:
-    c.KubeSpawner.image_spec = 'magicalion/singleuser:latest'
+    c.KubeSpawner.image_spec = 'magicalion/singleuser:tf2'
 else:
-    c.KubeSpawner.image_spec = 'magicalion/singleuser:dev'
+    c.KubeSpawner.image_spec = 'magicalion/singleuser:tf2'
 
 # gpu machine
 # c.DockerSpawner.image = 'magicalion/singleuser:latest-gpu'
