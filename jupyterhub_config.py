@@ -1649,6 +1649,11 @@ c.KubeSpawner.extra_pod_config = {
     'hostname': 'notebook',
 }
 
+c.KubeSpawner.extra_labels = {
+    'user_ID': '{user_ID}',
+    'project_name': '{project_name}',
+}
+
 if ENV in ['MO', 'ZJUNEW']:
     c.KubeSpawner.extra_pod_config['nodeSelector'] = {
         # run notebooks on cpu nodes
